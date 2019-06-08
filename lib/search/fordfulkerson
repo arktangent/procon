@@ -1,0 +1,39 @@
+
+struct edge {
+    ll to, cap, rev;
+};
+
+vector<vector<edge>> G;
+vector<bool> used;
+
+void add_edge(ll from, ll to, ll cap) {
+    G[from].push_back({to, cap, G[to].size()});
+    G[to].push_back({from, 0, G[from].size() - 1});
+}
+
+ll dfs(ll v, ll t, ll f) {
+    if(v == t) return f;
+    used[v] = true;
+    REP(i, G[v].size()) {
+        edge &e = G[v][i];
+        if(!used[e.to] && e.cap > 0) {
+            ll d = dfs(e.to, t, min(f, e.cap));
+            if(d > 0) {
+                e.cap -= d;
+                G[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+ll max_flow(ll s, ll t) {
+    ll flow = 0;
+    while(1) {
+        fill(All(used), false);
+        ll f = dfs(s, t, LINF);
+        if(f == 0) return flow;
+        flow += f;
+    }
+}

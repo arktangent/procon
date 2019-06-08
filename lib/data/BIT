@@ -1,0 +1,78 @@
+template <typename T>
+struct BIT
+{
+	vector<T> bi;
+	T size;
+	void init(T n, T v)
+	{
+		bi.resize(n + 1);
+		size = n + 1;
+		fill(All(b), v);
+	}
+	T sum(T i)
+	{
+		T s = 0;
+		while (i > 0)
+		{
+			s += bit[i];
+			i = i & (i - 1);
+		}
+		return s;
+	}
+	void add(T i, T v)
+	{
+		while (i <= size)
+		{
+			bit[i] += v;
+			i += i & -i;
+		}
+	}
+};
+
+//new
+template <typename T> struct BIT {
+    int n;
+    vector<T> dat;
+
+    BIT(ll n = 0) { initialize(n); }
+
+    void initialize(ll nin) {
+        n = nin + 1;
+        dat.resize(n + 1);
+        fill(All(dat), 0);
+    }
+
+    T sum(ll i) {
+        T s = 0;
+        while(i > 0) {
+            s += dat[i];
+            i = i & (i - 1);
+        }
+        return s;
+    }
+
+    T sum_between(ll i, ll j) {
+        if(i > j) return 0;
+        return sum(j) - sum(i - 1);
+    }
+
+    void plus(ll i, T x) {
+        while(i <= n) {
+            dat[i] += x;
+            i += i & -i;
+        }
+    }
+
+    ll lower_bound(T x) {
+        ll ret = 0;
+        ll k = 1;
+        while(2 * k <= n) k <<= 1;
+        for(; k > 0; k >>= 1) {
+            if(ret + k <= n && dat[ret + k] < x) {
+                x -= dat[ret + k];
+                ret += k;
+            }
+        }
+        return ret + 1;
+    }
+};

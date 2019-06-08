@@ -1,0 +1,65 @@
+ll H, W, sw, sh, gw, gh;
+vector<string> board;
+vector<VL> broken;
+ll dw[4] = {1, -1, 0, 0};
+ll dh[4] = {0, 0, 1, -1};
+
+//0-1bfs
+deque<PL> dq;
+dq.emplace_back(sh, sw);
+broken[sh][sw] = 0;
+while(!dq.empty()) {
+    PL now = dq.front();
+    dq.pop_front();
+    ll h = now.first;
+    ll w = now.second;
+    cout << h << " " << w << "\n";
+    REP(i, 4) {
+        ll nh = h + dh[i];
+        ll nw = w + dw[i];
+        if(0 <= nh && nh <= H - 1 && 0 <= nw && nw <= W - 1) {
+            if(board[nh][nw] == 'g') {
+                cout << "YES"
+                        << "\n";
+                return 0;
+            }
+            if(board[nh][nw] == '.' && broken[h][w] < broken[nh][nw]) {
+                dq.emplace_front(nh, nw);
+                broken[nh][nw] = broken[h][w];
+            } else if(board[nh][nw] == '#' && broken[h][w] + 1 < broken[nh][nw] && broken[h][w] + 1 <= 2) {
+                dq.emplace_back(nh, nw);
+                broken[nh][nw] = broken[h][w] + 1;
+            }
+        }
+    }
+}
+cout << "NO"
+        << "\n";
+
+
+ll N, M;
+struct edge {
+    ll to, cost;
+    bool operator<(const edge &another) const { return cost < another.cost; };
+    bool operator>(const edge &another) const { return cost > another.cost; };
+};
+vector<vector<edge>> g;
+VL d;
+
+void bfs(ll s) {
+    queue<ll> q;
+    q.emplace(s);
+    d.assign(N, LINF);
+    d[s] = 0;
+    while(!q.empty()) {
+        ll now = q.front();
+        q.pop();
+        REP(i, g[now].size()) {
+            edge e = g[now][i];
+            if(d[e.to] == LINF) {
+                d[e.to] = d[now] + 1;
+                q.emplace(e.to);
+            }
+        }
+    }
+}

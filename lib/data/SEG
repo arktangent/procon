@@ -1,0 +1,53 @@
+template <typename T> struct SegTree {
+    vector<T> dat;
+    ll size;
+
+    SegTree(ll n) { init(n); };
+
+    void init(ll n_) {
+        size = 1;
+        while(size < n_) size *= 2;
+        dat.resize(2 * size - 1);
+        REP(i, 2 * size - 1) dat[i] = LINF;
+    };
+
+    T getval(ll k) {
+        k += size - 1;
+        ll ret = dat[k];
+        while(k > 0) {
+            k = (k - 1) / 2;
+            ret = min(ret, dat[k]);
+        }
+        return ret;
+    }
+
+    void update2(ll x, ll y, T v, ll l, ll r, ll k) {
+        if(l >= r) return;
+        if(x <= l && r <= y)
+            dat[k] = min(dat[k], v);
+        else if(l < y && x < r) {
+            update2(x, y, v, l, (l + r) / 2, k * 2 + 1);
+            update2(x, y, v, (l + r) / 2, r, k * 2 + 2);
+        }
+    }
+
+    void update1(ll k, ll a) {
+        k += size - 1;
+        dat[k] = a;
+        while(k > 0) {
+            k = (k - 1) / 2;
+            dat[k] = min(dat[k * 2 + 1], dat[k * 2 + 2]);
+        }
+    };
+
+    ll query(ll a, ll b, ll k, ll l, ll r) {
+        if(r <= a || b <= l) return LINF;
+        if(a <= l && r <= b)
+            return dat[k];
+        else {
+            ll vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
+            ll vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
+            return min(vl, vr);
+        }
+    };
+};

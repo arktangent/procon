@@ -1,0 +1,30 @@
+ll N, M;
+struct edge {
+    ll to, cost;
+    bool operator<(const edge &another) const { return cost < another.cost; };
+    bool operator>(const edge &another) const { return cost > another.cost; };
+};
+vector<vector<edge>> g;
+VL d;
+
+void dijkstra(ll s) {
+    priority_queue<edge, vector<edge>, greater<edge>> pq;
+    d.assign(N, LINF);
+    d[s] = 0;
+    pq.push({s, 0});
+
+    while(!pq.empty()) {
+        edge now = pq.top();
+        pq.pop();
+        ll v = now.to;
+        if(d[v] < now.cost) continue;
+
+        REP(i, g[v].size()) {
+            edge e = g[v][i];
+            if(d[e.to] > d[v] + e.cost) {
+                d[e.to] = d[v] + e.cost;
+                pq.push({e.to, d[e.to]});
+            }
+        }
+    }
+}

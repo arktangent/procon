@@ -1,0 +1,21 @@
+// 正方行列の積
+vector<VL> matmul(vector<VL> a, vector<VL> b) {
+    ll len = a[0].size();
+    vector<VL> ret(len, VL(len, 0));
+    REP(i, len) REP(j, len) REP(k, len) {
+        ret[i][j] += a[i][k] * b[k][j];
+        ret[i][j] %= MOD;
+    }
+    return ret;
+}
+
+vector<VL> matpow(vector<VL> m, ll n) {
+    ll len = m[0].size();
+    if(n == 0) {
+        REP(i, len) REP(j, len) { m[i][j] = (i == j); }
+        return m;
+    }
+    auto res = matpow(matmul(m, m), n / 2);
+    if(n & 1) res = matmul(m, res);
+    return res;
+}

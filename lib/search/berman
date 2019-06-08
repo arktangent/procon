@@ -1,0 +1,43 @@
+struct edge {
+    ll from, to, cost;
+    bool operator<(const edge &another) const { return cost < another.cost; };
+    bool operator>(const edge &another) const { return cost > another.cost; };
+};
+ll N, M;
+vector<edge> es;
+VL d;
+
+//目的外の負ループも見つけるので注意
+bool find_nloop() {
+    d.assign(N, 0);
+    ll cnt = 0;
+    while(true) {
+        bool update = false;
+        REP(i, SZ(es)) {
+            edge e = es[i];
+            if(d[e.from] != LINF && d[e.to] > d[e.from] + e.cost) {
+                d[e.to] = d[e.from] + e.cost;
+                update = true;
+            }
+        }
+        cnt++;
+        if(!update) break;
+        if(cnt == N - 1) return true;
+    }
+    return false;
+}
+void berman(ll s) {
+    d.assign(N, LINF);
+    d[s] = 0;
+    while(true) {
+        bool update = false;
+        REP(i, SZ(es)) {
+            edge e = es[i];
+            if(d[e.from] != LINF && d[e.to] > d[e.from] + e.cost) {
+                d[e.to] = d[e.from] + e.cost;
+                update = true;
+            }
+        }
+        if(!update) break;
+    }
+}

@@ -1,0 +1,4 @@
+struct dir{int dw,dh;};
+dir D[]={{1,0},{-1,0},{0,1},{0,-1}};
+struct dirxy{int dx,dy;};
+dir D[]={{1,0},{-1,0},{0,1},{0,-1}};

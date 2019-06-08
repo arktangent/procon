@@ -1,0 +1,113 @@
+/*
+#include <bits/stdc++.h>
+//í èÌ
+struct UnionFind {
+    V par,rank;
+    UnionFind(int size){
+        init(size);
+    }
+    void init(int size){
+        REP(i,size){par.push_back(i); rank.push_back(0);}
+    }
+    int root(int x){
+        if(par[x]==x) return x;
+        else{
+            int r = root(par[x]);
+            return par[x]=r;
+        }
+    }
+    void unite(int x,int y){
+        x=root(x);
+        y=root(y);
+        if(x==y) return;
+        if(rank[x]<rank[y]){
+            swap(x,y);
+        }else{
+            if(rank[x]==rank[y]) rank[x]++;
+        }
+        par[y]=x;
+    }
+    bool same(int x, int y){
+        return root(x)==root(y);
+    }
+};
+
+// sizeóp
+struct UnionFind {
+    vector<ll> par;
+    vector<ll> sizes;
+
+    UnionFind(ll n) : par(n), sizes(n, 1) { REP(i, n) par[i] = i; }
+
+    ll find(ll x) {
+        if(x == par[x]) return x;
+        return par[x] = find(par[x]);
+    }
+
+    void unite(ll x, ll y) {
+        x = find(x);
+        y = find(y);
+
+        if(x == y) return;
+
+        if(sizes[x] < sizes[y]) swap(x, y);
+
+        par[y] = x;
+        sizes[x] += sizes[y];
+        sizes[y] = 0;
+    }
+
+    bool same(ll x, ll y) { return find(x) == find(y); }
+
+    ll size(ll x) { return sizes[find(x)]; }
+};
+
+//èdÇ›ïtÇ´
+template<class Abel>
+struct UnionFind {
+    V par,rank;
+    vector<Abel> diff_weight;
+    UnionFind(int size, Abel SUM_UNITY=0){
+        init(size, SUM_UNITY);
+    }
+    void init(int size, Abel SUM_UNITY=0){
+        REP(i,size){
+            par.push_back(i);
+            rank.push_back(0);
+            diff_weight.push_back(SUM_UNITY);
+        }
+    }
+    int root(int x){
+        if(par[x]==x) return x;
+        else{
+            int r = root(par[x]);
+            diff_weight[x]+=diff_weight[par[x]];
+            return par[x]=r;
+        }
+    }
+    void unite(int x,int y,Abel w){
+        w += weight(x); w=weight(y);
+        x=root(x);
+        y=root(y);
+        if(x==y) return;
+        if(rank[x]<rank[y]){
+            swap(x,y);
+            w=-w;
+        }else{
+            if(rank[x]==rank[y]) rank[x]++;
+        }
+        par[y]=x;
+        diff_weight[y]=w;
+    }
+    Abel weight(int x){
+        root(x);
+        return diff_weight[x];
+    }
+    Abel diff(int x, int y){
+        return weight(y)-weight(x);
+    }
+    bool same(int x, int y){
+        return root(x)==root(y);
+    }
+};
+*/

@@ -1,0 +1,29 @@
+ll mod_pow(ll base, ll index, ll mod){
+    if(index==0) return 1LL;
+    ll res = mod_pow((base*base)%mod, index/2, mod);
+    if(index&1) (res*=base)%=mod;
+    return res;
+}
+
+ll mypow(ll x, ll n) {
+    ll res = 1;
+    while(n > 0) {
+        if(n & 1) res = res * x;
+        x *= x;
+        n >>= 1;
+    }
+    return res;
+}
+
+ll modmul(ll a, ll b) { return ((a % MOD) * (b % MOD)) % MOD; }
+
+ll modsub(ll a, ll b) { return (a - b + MOD) % MOD; }
+
+ll mod_pow(ll base, ll index, ll mod) {
+    if(index == 0) return 1LL;
+    ll res = mod_pow((base * base) % mod, index / 2, mod);
+    if(index & 1) (res *= base) %= mod;
+    return res;
+}
+
+ll modinv(ll a) { return mod_pow(a, MOD - 2, MOD); }

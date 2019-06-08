@@ -1,0 +1,47 @@
+
+template <typename T>
+class RMQseg
+{
+private:
+	vector<T> dat;
+	T BIAS;
+
+public:
+	T getBIAS() { return BIAS; }
+	T getValue(T k) { return dat[k]; }
+	void init(T n, T v)
+	{
+		T m = 1;
+		while (m < n)
+			m *= 2;
+		BIAS = m;
+		dat.resize(2 * m - 1);
+		REP(i, 2 * m - 1)
+		{
+			dat[i] = v;
+		}
+	}
+	void update(T k, T a)
+	{
+		k += BIAS - 1;
+		dat[k] = a;
+		while (k > 0)
+		{
+			k = (k - 1) / 2;
+			dat[k] = max(dat[k * 2 + 1], dat[k * 2 + 2]);
+		}
+	}
+	T query(T a, T b, T k, T l, T r)
+	{
+		if (r <= a || b <= l)
+			return 0;
+		if (a <= l && r <= b)
+			return dat[k];
+		else
+		{
+			T vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
+			T vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
+			return max(vl, vr);
+		}
+	}
+};

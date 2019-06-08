@@ -1,0 +1,20 @@
+struct edge {
+    ll from, to,from;
+    bool operator<(const edge &another) const { return cost < another.cost; };
+    bool operator>(const edge &another) const { return cost > another.cost; };
+};
+vector<edge> es;
+
+ll kruskal(){
+    ll res = 0;
+    auto uf = UnionFind(N);
+    sort(All(es));
+    REP(i, SZ(es)) {
+        edge e = es[i];
+        if(!uf.same(e.from, e.to)) {
+            uf.unite(e.from, e.to);
+            res += e.cost;
+        }
+    }
+    return res;
+}
