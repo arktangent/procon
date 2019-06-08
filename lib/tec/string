@@ -1,3 +1,4 @@
+//find program
 vector<string> split(string str, char del) {
     ll first = 0;
     ll last = str.find_first_of(del);
@@ -17,6 +18,24 @@ vector<string> split(string str, char del) {
         }
     }
  
+    return result;
+}
+
+//for program
+std::vector<std::string> split(std::string str, char del) {
+    std::vector<std::string> result;
+    std::string subStr;
+
+    for(const char c : str) {
+        if(c == del) {
+            result.push_back(subStr);
+            subStr.clear();
+        } else {
+            subStr += c;
+        }
+    }
+
+    result.push_back(subStr);
     return result;
 }
 
