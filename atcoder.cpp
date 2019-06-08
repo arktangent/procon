@@ -65,6 +65,7 @@ VL a;
 
 signed main() {
     cin >> N;
+    // hoge
     REP(i, N) {
         a.emplace_back(IN());
         sum += a[i];
