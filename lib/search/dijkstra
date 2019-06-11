@@ -28,3 +28,38 @@ void dijkstra(ll s) {
         }
     }
 }
+
+
+
+ll N, M;
+struct edge {
+    ll to, cost;
+    bool operator<(const edge &another) const { return cost < another.cost; };
+    bool operator>(const edge &another) const { return cost > another.cost; };
+};
+vector<vector<edge>> G;
+VL d,pre;
+
+//復元
+void dijkstra(ll s) {
+    priority_queue<edge, vector<edge>, greater<edge>> pq;
+    d.assign(N, LINF);
+    pre.assign(N, -1);
+    pq.push({s, 0});
+
+    while(!pq.empty()) {
+        edge now = pq.top();
+        pq.pop();
+        ll v = now.to;
+        if(d[v] < now.cost) continue;
+
+        REP(i, G[v].size()) {
+            edge e = G[v][i];
+            if(d[e.to] > d[v] + e.cost) {
+                d[e.to] = d[v] + e.cost;
+                pre[e.to] = v;
+                pq.push({e.to, d[e.to]});
+            }
+        }
+    }
+}

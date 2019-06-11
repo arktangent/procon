@@ -63,3 +63,27 @@ void bfs(ll s) {
         }
     }
 }
+
+ll H, W, sx, sy, gx, gy;
+vector<string> G;
+vector<VL> d;
+
+void bfs(PL s) {
+    queue<PL> q;
+    q.emplace(s);
+    d.assign(H, VL(W, -LINF));
+    d[s.fi][s.se] = 0;
+    while(!q.empty()) {
+        PL now = q.front();
+        q.pop();
+        ll y = now.fi, x = now.se;
+        if(y == gy && x == gx) break;
+        REP(i, 4) {
+            ll ny = y + dy[i], nx = x + dx[i];
+            if(G[ny][nx] == '.' && d[ny][nx] == -LINF) {
+                d[ny][nx] = d[y][x] + 1;
+                q.emplace(ny, nx);
+            }
+        }
+    }
+}
