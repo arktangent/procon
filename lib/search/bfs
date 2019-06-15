@@ -1,49 +1,85 @@
-ll H, W, sw, sh, gw, gh;
-vector<string> board;
-vector<VL> broken;
 ll dw[4] = {1, -1, 0, 0};
 ll dh[4] = {0, 0, 1, -1};
+ll H, W, sw, sh, gw, gh;
+vector<string> G;
+vector<VL> d;
 
 //0-1bfs
-deque<PL> dq;
-dq.emplace_back(sh, sw);
-broken[sh][sw] = 0;
-while(!dq.empty()) {
-    PL now = dq.front();
-    dq.pop_front();
-    ll h = now.first;
-    ll w = now.second;
-    cout << h << " " << w << "\n";
-    REP(i, 4) {
-        ll nh = h + dh[i];
-        ll nw = w + dw[i];
-        if(0 <= nh && nh <= H - 1 && 0 <= nw && nw <= W - 1) {
-            if(board[nh][nw] == 'g') {
-                cout << "YES"
-                        << "\n";
-                return 0;
-            }
-            if(board[nh][nw] == '.' && broken[h][w] < broken[nh][nw]) {
-                dq.emplace_front(nh, nw);
-                broken[nh][nw] = broken[h][w];
-            } else if(board[nh][nw] == '#' && broken[h][w] + 1 < broken[nh][nw] && broken[h][w] + 1 <= 2) {
-                dq.emplace_back(nh, nw);
-                broken[nh][nw] = broken[h][w] + 1;
+void bfs01(){
+    deque<PL> dq;
+    dq.emplace_back(sh, sw);
+    d.assign(H,VL(W,LINF));
+    d[sh][sw] = 0;
+    while(!dq.empty()) {
+        PL now = dq.front();
+        dq.pop_front();
+        ll h = now.first;
+        ll w = now.second;
+        cout << h << " " << w << "\n";
+        REP(i, 4) {
+            ll nh = h + dh[i];
+            ll nw = w + dw[i];
+            if(0 <= nh && nh <= H - 1 && 0 <= nw && nw <= W - 1) {
+                if(G[nh][nw] == 'g') {
+                    cout << "YES"
+                            << "\n";
+                }
+                if(G[nh][nw] == '.' && d[h][w] < d[nh][nw]) {
+                    dq.emplace_front(nh, nw);
+                    d[nh][nw] = d[h][w];
+                } else if(G[nh][nw] == '#' && d[h][w] + 1 < d[nh][nw] && d[h][w] + 1 <= 2) {
+                    dq.emplace_back(nh, nw);
+                    d[nh][nw] = d[h][w] + 1;
+                }
             }
         }
     }
 }
-cout << "NO"
-        << "\n";
 
 
-ll N, M;
+ll dw[4] = {1, -1, 0, 0};
+ll dh[4] = {0, 0, 1, -1};
+ll H, W, T, sw, sh, gw, gh;
 struct edge {
-    ll to, cost;
+    ll h, w, cost;
     bool operator<(const edge &another) const { return cost < another.cost; };
     bool operator>(const edge &another) const { return cost > another.cost; };
 };
-vector<vector<edge>> g;
+vector<string> G;
+vector<VL> d;
+
+// 0-1bfs拡張
+void bfs01(ll x) {
+    priority_queue<edge, vector<edge>, greater<edge>> pq;
+    pq.push({sh, sw, 0});
+    d.assign(H, VL(W, LINF));
+    d[sh][sw] = 0;
+    while(!pq.empty()) {
+        edge now = pq.top();
+        pq.pop();
+        ll h = now.h;
+        ll w = now.w;
+        REP(i, 4) {
+            ll nh = h + dh[i];
+            ll nw = w + dw[i];
+            if(0 <= nh && nh <= H - 1 && 0 <= nw && nw <= W - 1) {
+                if((G[nh][nw] == '.' || G[nh][nw] == 'G') && d[h][w] + 1 < d[nh][nw]) {
+                    d[nh][nw] = d[h][w] + 1;
+                    pq.push({nh, nw, d[nh][nw]});
+                } else if(G[nh][nw] == '#' && d[h][w] + x < d[nh][nw]) {
+                    d[nh][nw] = d[h][w] + x;
+                    pq.push({nh, nw, d[nh][nw]});
+                }
+            }
+        }
+    }
+}
+
+
+
+
+ll N, M;
+vector<VL> g;
 VL d;
 
 void bfs(ll s) {
@@ -55,15 +91,43 @@ void bfs(ll s) {
         ll now = q.front();
         q.pop();
         REP(i, g[now].size()) {
-            edge e = g[now][i];
-            if(d[e.to] == LINF) {
-                d[e.to] = d[now] + 1;
-                q.emplace(e.to);
+            ll to = g[now][i];
+            if(d[to] == LINF) {
+                d[to] = d[now] + 1;
+                q.emplace(to);
             }
         }
     }
 }
 
+ll N, M;
+vector<VL> g;
+VL d;
+
+\\ver_経路カウント
+void bfs(ll s) {
+    queue<ll> q;
+    q.emplace(s);
+    d.assign(N, LINF);
+    d[s] = 0;
+    cnt[s] = 1;
+    while(!q.empty()) {
+        ll now = q.front();
+        q.pop();
+        REP(i, g[now].size()) {
+            ll to = g[now][i];
+            if(d[to] == LINF) {
+                d[to] = d[now] + 1;
+                (cnt[to] += cnt[now]) %= MOD;
+                q.emplace(to);
+            } else if(d[to] == d[now] + 1) {
+                (cnt[to] += cnt[now]) %= MOD;
+            }
+        }
+    }
+}
+
+//ver_grid
 ll H, W, sx, sy, gx, gy;
 vector<string> G;
 vector<VL> d;
