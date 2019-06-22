@@ -27,3 +27,12 @@ ll mod_pow(ll base, ll index, ll mod) {
 }
 
 ll modinv(ll a) { return mod_pow(a, MOD - 2, MOD); }
+
+ll digsum(ll x) {
+    ll ret = 0;
+    while(x > 0) {
+        ret += x % 10;
+        x /= 10;
+    }
+    return ret;
+}
