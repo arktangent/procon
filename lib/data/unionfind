@@ -61,53 +61,49 @@ struct UnionFind {
 
     ll size(ll x) { return sizes[find(x)]; }
 };
-
 //èdÇ›ïtÇ´
-template<class Abel>
-struct UnionFind {
-    V par,rank;
+template <class Abel> struct UnionFind {
+    VL par, rank;
     vector<Abel> diff_weight;
-    UnionFind(int size, Abel SUM_UNITY=0){
-        init(size, SUM_UNITY);
-    }
-    void init(int size, Abel SUM_UNITY=0){
-        REP(i,size){
+    UnionFind(int size, Abel SUM_UNITY = 0) { init(size, SUM_UNITY); }
+    void init(int size, Abel SUM_UNITY = 0) {
+        par.clear();
+        rank.clear();
+        diff_weight.clear();
+        REP(i, size) {
             par.push_back(i);
             rank.push_back(0);
             diff_weight.push_back(SUM_UNITY);
         }
     }
-    int root(int x){
-        if(par[x]==x) return x;
-        else{
+    int root(int x) {
+        if(par[x] == x)
+            return x;
+        else {
             int r = root(par[x]);
-            diff_weight[x]+=diff_weight[par[x]];
-            return par[x]=r;
+            diff_weight[x] += diff_weight[par[x]];
+            return par[x] = r;
         }
     }
-    void unite(int x,int y,Abel w){
-        w += weight(x); w=weight(y);
-        x=root(x);
-        y=root(y);
-        if(x==y) return;
-        if(rank[x]<rank[y]){
-            swap(x,y);
-            w=-w;
-        }else{
-            if(rank[x]==rank[y]) rank[x]++;
+    void unite(int x, int y, Abel w) {
+        w += weight(x);
+        w -= weight(y);
+        x = root(x);
+        y = root(y);
+        if(x == y) return;
+        if(rank[x] < rank[y]) {
+            swap(x, y);
+            w = -w;
+        } else {
+            if(rank[x] == rank[y]) rank[x]++;
         }
-        par[y]=x;
-        diff_weight[y]=w;
+        par[y] = x;
+        diff_weight[y] = w;
     }
-    Abel weight(int x){
+    Abel weight(int x) {
         root(x);
         return diff_weight[x];
     }
-    Abel diff(int x, int y){
-        return weight(y)-weight(x);
-    }
-    bool same(int x, int y){
-        return root(x)==root(y);
-    }
+    Abel diff(int x, int y) { return abs(weight(y) - weight(x)); }
+    bool same(int x, int y) { return root(x) == root(y); }
 };
-*/
