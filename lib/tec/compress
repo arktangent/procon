@@ -1,0 +1,13 @@
+map<ll,ll> zip;
+VL unzip;
+
+ll compress(vector<ll> &x) {
+    sort(x.begin(), x.end());
+    x.erase(unique(x.begin(),x.end()),x.end());
+    unzip.resize(x.size());
+    for(ll i = 0; i < x.size(); i++){
+        zip[x[i]] = i;
+        unzip[i] = x[i];
+    }
+    return x.size();
+}
