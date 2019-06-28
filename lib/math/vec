@@ -1,0 +1,14 @@
+
+struct V2 {
+    double x, y;
+    V2() {}
+    V2(double x, double y) : x(x), y(y) {}
+    V2 operator+(V2 v) { return V2(x + v.x, y + v.y); }
+    V2 operator-(V2 v) { return V2(x - v.x, y - v.y); }
+    V2 operator*(double c) { return V2(c * x, c * y); }
+    double dot(V2 v) { return x * v.x + y * v.y; }
+    double det(V2 v) { return x * v.y - y * v.x; }
+};
+
+
+double dist(V2 v, V2 w) { return (v - w).dot(v - w); }

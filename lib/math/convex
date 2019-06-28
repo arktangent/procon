@@ -1,0 +1,18 @@
+bool cmp_x(const V2 &v1, const V2 &v2) {
+    return (v1.x != v2.x ? v1.x < v2.x : v1.y < v2.y);
+}
+vector<V2> Graham(vector<V2> vs) {
+    sort(All(vs), cmp_x);
+    ll k = 0, n = vs.size();
+    vector<V2> ws(n * 2);
+    REP(i, n) {
+        while(k > 1 && (ws[k - 1] - ws[k - 2]).det(vs[i] - ws[k - 1]) <= 0) k--;
+        ws[k++] = vs[i];
+    }
+    for(ll i = n - 2, t = k; i >= 0; i--) {
+        while(k > t && (ws[k - 1] - ws[k - 2]).det(vs[i] - ws[k - 1]) <= 0) k--;
+        ws[k++] = vs[i];
+    }
+    ws.resize(k - 1);
+    return ws;
+}
