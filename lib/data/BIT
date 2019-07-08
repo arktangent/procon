@@ -29,7 +29,7 @@ struct BIT
 	}
 };
 
-//new
+// new
 template <typename T> struct BIT {
     int n;
     vector<T> dat;
@@ -38,7 +38,7 @@ template <typename T> struct BIT {
 
     void initialize(ll nin) {
         n = nin + 1;
-        dat.resize(n + 1);
+        dat.resize(n);
         fill(All(dat), 0);
     }
 
@@ -68,7 +68,20 @@ template <typename T> struct BIT {
         ll k = 1;
         while(2 * k <= n) k <<= 1;
         for(; k > 0; k >>= 1) {
-            if(ret + k <= n && dat[ret + k] < x) {
+            if(ret + k < n && dat[ret + k] < x) {
+                x -= dat[ret + k];
+                ret += k;
+            }
+        }
+        return ret + 1;
+    }
+
+    ll upper_bound(T x) {
+        ll ret = 0;
+        ll k = 1;
+        while(2 * k <= n) k <<= 1;
+        for(; k > 0; k >>= 1) {
+            if(ret + k < n && dat[ret + k] <= x) {
                 x -= dat[ret + k];
                 ret += k;
             }
