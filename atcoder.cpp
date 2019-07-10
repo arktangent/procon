@@ -74,86 +74,85 @@ template <typename T, typename E> struct SegmentTree {
     using F = function<T(T, T)>;
     using G = function<T(T, E)>;
     using H = function<E(E, E)>;
-    int n, height;
+    using P = function<E(E, int)>;
+    int n;
+    // dat(出力)のマージ（更新）
     F f;
+    // lazをdatに反映演算
     G g;
+    // laz(更新)のパージ（更新）（下に伝播）
     H h;
-    T ti;
-    E ei;
+    // lazをdatに反映演算(まとめ)
+    P p;
+    T e1;
+    E e2;
     vector<T> dat;
     vector<E> laz;
-    SegmentTree(F f, G g, H h, T ti, E ei) : f(f), g(g), h(h), ti(ti), ei(ei) {}
-
+    SegmentTree(int n_, F f, G g, H h, T e1, E e2, vector<T> v = vector<T>(),
+                P p = [](E a, int b) { return a; })
+        : f(f), g(g), h(h), e1(e1), e2(e2), p(p) {
+        init(n_);
+        if(n_ == (int)v.size()) build(n_, v);
+    }
     void init(int n_) {
         n = 1;
-        height = 0;
-        while(n < n_) n <<= 1, height++;
-        dat.assign(2 * n, ti);
-        laz.assign(2 * n, ei);
+        while(n < n_) n *= 2;
+        dat.clear();
+        dat.resize(2 * n - 1, e1);
+        laz.clear();
+        laz.resize(2 * n - 1, e2);
     }
-    void build(const vector<T> &v) {
-        int n_ = v.size();
-        init(n_);
-        for(int i = 0; i < n_; i++) dat[n + i] = v[i];
-        for(int i = n - 1; i; i--)
-            dat[i] = f(dat[(i << 1) | 0], dat[(i << 1) | 1]);
+    void build(int n_, vector<T> v) {
+        for(int i = 0; i < n_; i++) dat[i + n - 1] = v[i];
+        for(int i = n - 2; i >= 0; i--)
+            dat[i] = f(dat[i * 2 + 1], dat[i * 2 + 2]);
     }
-    inline T reflect(int k) {
-        return laz[k] == ei ? dat[k] : g(dat[k], laz[k]);
-    }
-    inline void eval(int k) {
-        if(laz[k] == ei) return;
-        laz[(k << 1) | 0] = h(laz[(k << 1) | 0], laz[k]);
-        laz[(k << 1) | 1] = h(laz[(k << 1) | 1], laz[k]);
-        dat[k] = reflect(k);
-        laz[k] = ei;
-    }
-    inline void thrust(int k) {
-        for(int i = height; i; i--) eval(k >> i);
-    }
-    inline void recalc(int k) {
-        while(k >>= 1) dat[k] = f(reflect((k << 1) | 0), reflect((k << 1) | 1));
-    }
-    void update(int a, int b, E x) {
-        thrust(a += n);
-        thrust(b += n - 1);
-        for(int l = a, r = b + 1; l < r; l >>= 1, r >>= 1) {
-            if(l & 1) laz[l] = h(laz[l], x), l++;
-            if(r & 1) --r, laz[r] = h(laz[r], x);
+    inline void eval(int len, int k) {
+        if(laz[k] == e2) return;
+        if(k * 2 + 1 < n * 2 - 1) {
+            laz[k * 2 + 1] = h(laz[k * 2 + 1], laz[k]);
+            laz[k * 2 + 2] = h(laz[k * 2 + 2], laz[k]);
         }
-        recalc(a);
-        recalc(b);
+        dat[k] = g(dat[k], p(laz[k], len));
+        laz[k] = e2;
     }
-    void set_val(int a, T x) {
-        thrust(a += n);
-        dat[a] = x;
-        laz[a] = ei;
-        recalc(a);
-    }
-    T query(int a, int b) {
-        thrust(a += n);
-        thrust(b += n - 1);
-        T vl = ti, vr = ti;
-        for(int l = a, r = b + 1; l < r; l >>= 1, r >>= 1) {
-            if(l & 1) vl = f(vl, reflect(l++));
-            if(r & 1) vr = f(reflect(--r), vr);
+    T update(int a, int b, E x, int k, int l, int r) {
+        eval(r - l, k);
+        if(r <= a || b <= l) return dat[k];
+        if(a <= l && r <= b) {
+            laz[k] = h(laz[k], x);
+            return g(dat[k], p(laz[k], r - l));
         }
+        eval(r - l, k);
+        return dat[k] = f(update(a, b, x, k * 2 + 1, l, (l + r) / 2), update(a, b, x, k * 2 + 2, (l + r) / 2, r));
+    }
+    T update(int a, int b, E x) { return update(a, b, x, 0, 0, n); }
+    T query(int a, int b, int k, int l, int r) {
+        eval(r - l, k);
+        if(r <= a || b <= l) return e1;
+        if(a <= l && r <= b) return dat[k];
+        T vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
+        T vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
         return f(vl, vr);
     }
+    T query(int a, int b) { return query(a, b, 0, 0, n); }
 };
 
 signed main() {
     LCIN(n, q);
-    ll ti = (1LL << 31) - 1;
-    SegmentTree<ll, ll> rmq([](ll a, ll b) { return min(a, b); },
-                            [](ll a, ll b) { return b; }, ti);
-    rmq.build(VL(n, ti));
+    ll e1 = 1 << 30, e2 = 0;
+    SegmentTree<ll, ll> seg(n, [](ll a, ll b) { return min(a, b); },
+                            [](ll a, ll b) { return a + b; },
+                            [](ll a, ll b) { return a + b; }, e1, e2, VL(n, e1),
+                            [](ll a, ll b) { return a; });
+    seg.update(0, n, -e1);
     REP(i, q) {
-        LCIN(com, x, y);
-        if(com) {
-            cout << rmq.query(x, y + 1) << "\n";
+        if(IN()) {
+            LCIN(s, t);
+            cout << seg.query(s, t + 1) << "\n";
         } else {
-            rmq.set_val(x, y);
+            LCIN(s, t, x);
+            seg.update(s, t + 1, x);
         }
     }
 }
