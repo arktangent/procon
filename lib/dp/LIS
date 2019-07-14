@@ -1,0 +1,52 @@
+template <typename T>
+vector<T> LIS(vector<T> v, T ini){
+    ll n = v.size()
+    vector<T> ret(n,ini);
+    REP(i,n){
+        *lower_bound(All(ret),v[i])=v[i];
+    }
+    ret.erase(lower_bound(All(ret),ini),ret.end());
+    return ret;
+}
+
+
+struct LIS {
+    vector<int> &v;
+    vector<int> dp, id, ret, info;
+    // info 1:unused 2:使っても良い 3:必ず使う
+    int n, lis;
+    LIS(vector<int> &_v) : v(_v) {
+        n = v.size();
+        dp.resize(n, INT_MAX / 2);
+        id.resize(n, 0);
+        REP(i, n) {
+            // 狭義単調増加列
+            // id[i] = lower_bound(dp.begin(), dp.end(), v[i]) - dp.begin();
+            // 広義単調増加列
+            id[i] = upper_bound(dp.begin(), dp.end(), v[i]) - dp.begin();
+            dp[id[i]] = v[i];
+        }
+        int nl = *max_element(id.begin(), id.end());
+        lis = nl;
+        ret.resize(nl + 1, 0);
+        REPR(i, n - 1) if(id[i] == nl) ret[nl] = v[i], nl--;
+
+        info.resize(n);
+        vector<int> ma(n + 1), cnt(n);
+        ma[lis] = INT_MAX / 2;
+        REPR(i, n - 1) {
+            // 狭義単調増加列
+            // if (ma[id[i] + 1] <= v[i]) info[i] = 1;
+            // 広義単調増加列
+            if(ma[id[i] + 1] < v[i])
+                info[i] = 1;
+
+            else
+                cnt[id[i]]++, ma[id[i]] = max(ma[id[i]], v[i]);
+        }
+
+        REPR(i, n - 1) if(info[i] == 0 && cnt[id[i]] == 1) info[i] = 3;
+        REP(i, n) if(info[i] == 0) info[i] = 2;
+        lis--;
+    }
+};
