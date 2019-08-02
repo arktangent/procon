@@ -69,37 +69,11 @@ const ll LINF = 9e18;
 const ll dx[] = {1, 0, -1, 0};
 const ll dy[] = {0, 1, 0, -1};
 
-ll n, idx;
-vector<string> s;
-
-bool judge5() {
-    ll cnt = 0;
-    while(cnt < 5 && idx < n) {
-        cnt += s[idx++].length();
-    }
-    return cnt == 5 ? true : false;
-}
-bool judge7() {
-    ll cnt = 0;
-    while(cnt < 7 && idx < n) {
-        cnt += s[idx++].length();
-    }
-    return cnt == 7 ? true : false;
+void cinfast() {
+    cin.tie(0);
+    ios::sync_with_stdio(false);
 }
 
-signed main() {
-    while(cin >> n && n != 0) {
-        REP(i, n) s.emplace_back(IN<string>());
-        REP(i, n) {
-            idx = i;
-            if(!judge5()) continue;
-            if(!judge7()) continue;
-            if(!judge5()) continue;
-            if(!judge7()) continue;
-            if(!judge7()) continue;
-            cout << i + 1 << "\n";
-            break;
-        }
-        s.clear();
-    }
-}
+string S, t;
+
+signed main() { cin >> S >> t; }
