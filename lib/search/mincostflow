@@ -1,0 +1,389 @@
+
+struct edge {
+    ll to, cap, cost, rev;
+};
+
+//bermanford
+struct Mincostflow {
+    vector<vector<edge>> G;
+    VL dist, prev, pree;
+    ll N;
+
+    Mincostflow(ll size) : N(size) { init(size); };
+
+    void init(ll size) {
+        G.resize(N);
+        prev.resize(N);
+        pree.resize(N);
+    }
+
+    void add_edge(ll from, ll to, ll cap, ll cost) {
+        G[from].push_back({to, cap, cost, (ll)G[to].size()});
+        G[to].push_back({from, 0, -cost, (ll)G[from].size() - 1});
+    }
+
+    ll min_cost_flow(ll s, ll t, ll f) {
+        ll res = 0;
+        while(f > 0) {
+            dist.assign(N, LINF);
+            dist[s] = 0;
+            bool update = true;
+            while(update) {
+                update = false;
+                REP(i, N) {
+                    if(dist[i] == LINF) continue;
+                    REP(j, G[i].size()) {
+                        edge &e = G[i][j];
+                        if(e.cap > 0 && dist[e.to] > dist[i] + e.cost) {
+                            dist[e.to] = dist[i] + e.cost;
+                            prev[e.to] = i;
+                            pree[e.to] = j;
+                            update = true;
+                        }
+                    }
+                }
+            }
+            if(dist[t] == LINF) return -1;
+            ll d = f;
+            for(int v = t; v != s; v = prev[v]) {
+                d = min(d, G[prev[v]][pree[v]].cap);
+            }
+            f -= d;
+            res += d * dist[t];
+            for(int v = t; v != s; v = prev[v]) {
+                edge &e = G[prev[v]][pree[v]];
+                e.cap -= d;
+                G[v][e.rev].cap += d;
+            }
+        }
+        return res;
+    }
+};
+
+struct edge {
+    ll to, cap, cost, rev;
+};
+
+// dijkstra
+struct Mincostflow {
+    vector<vector<edge>> G;
+    VL h, dist, prev, pree;
+    ll N;
+
+    Mincostflow(ll size) : N(size) { init(size); };
+
+    void init(ll size) {
+        G.resize(N);
+        prev.resize(N);
+        pree.resize(N);
+    }
+
+    void add_edge(ll from, ll to, ll cap, ll cost) {
+        G[from].push_back({to, cap, cost, (ll)G[to].size()});
+        G[to].push_back({from, 0, -cost, (ll)G[from].size() - 1});
+    }
+
+    ll min_cost_flow(ll s, ll t, ll f) {
+        ll res = 0;
+        h.assign(N, 0);
+        while(f > 0) {
+            PQG<PL> pq;
+            dist.assign(N, LINF);
+            dist[s] = 0;
+            pq.emplace(dist[s], s);
+            while(!pq.empty()) {
+                PL p = pq.top();
+                pq.pop();
+                ll v = p.se;
+                if(dist[v] < p.fi) continue;
+                REP(i, G[v].size()) {
+                    edge &e = G[v][i];
+                    if(e.cap > 0 &&
+                       dist[e.to] > dist[v] + e.cost + h[v] - h[e.to]) {
+                        dist[e.to] = dist[v] + e.cost + h[v] - h[e.to];
+                        prev[e.to] = v;
+                        pree[e.to] = i;
+                        pq.emplace(dist[e.to], e.to);
+                    }
+                }
+            }
+            if(dist[t] == LINF) return -1;
+            REP(v, N) h[v] += dist[v];
+            ll d = f;
+            for(int v = t; v != s; v = prev[v]) {
+                d = min(d, G[prev[v]][pree[v]].cap);
+            }
+            f -= d;
+            res += d * h[t];
+            for(int v = t; v != s; v = prev[v]) {
+                edge &e = G[prev[v]][pree[v]];
+                e.cap -= d;
+                G[v][e.rev].cap += d;
+            }
+        }
+        return res;
+    }
+
+    ll min_cost_flow2(ll s, ll t, ll f) {
+        ll res = 0;
+        h.assign(N, 0);
+        while(f > 0) {
+            PQG<PL> pq;
+            dist.assign(N, LINF);
+            dist[s] = 0;
+            vector<bool> used(N, false);
+            REP(t, N) {
+                ll trgt = -1;
+                ll mi = LINF;
+                REP(i, N) {
+                    if(used[i]) continue;
+                    if(dist[i] < mi) {
+                        mi = dist[i];
+                        trgt = i;
+                    }
+                }
+                if(trgt == -1) break;
+                used[trgt] = true;
+                REP(i, G[trgt].size()) {
+                    edge &e = G[trgt][i];
+                    if(e.cap > 0 &&
+                       dist[e.to] > dist[trgt] + e.cost + h[trgt] - h[e.to]) {
+                        dist[e.to] = dist[trgt] + e.cost + h[trgt] - h[e.to];
+                        prev[e.to] = trgt;
+                        pree[e.to] = i;
+                    }
+                }
+            }
+            if(dist[t] == LINF) return -1;
+            REP(v, N) h[v] += dist[v];
+            ll d = f;
+            for(int v = t; v != s; v = prev[v]) {
+                d = min(d, G[prev[v]][pree[v]].cap);
+            }
+            f -= d;
+            res += d * h[t];
+            for(int v = t; v != s; v = prev[v]) {
+                edge &e = G[prev[v]][pree[v]];
+                e.cap -= d;
+                G[v][e.rev].cap += d;
+            }
+        }
+        return res;
+    }
+};
+
+//負辺対応
+class MinimumCostFlow {
+    struct Edge {
+        const unsigned int to;  // 行き先のノードid
+        long long flow;         // 流量
+        const long long cap;    // 容量
+        const long long cost;   // コスト
+        const unsigned int rev; // 逆辺のノードid
+        const bool is_rev;      // 逆辺かどうか
+        Edge(unsigned int to, long long flow, long long cap, long long cost,
+             unsigned int rev, bool is_rev)
+            : to(to), flow(flow), cost(cost), cap(cap), rev(rev),
+              is_rev(is_rev) {
+            assert(this->cap >= 0);
+        }
+    };
+
+    const int num_node;                   // 頂点数
+    std::vector<std::vector<Edge>> graph; // グラフの隣接リスト表現
+    bool have_negative_cost = false;      // 負辺があるか
+
+  public:
+    MinimumCostFlow(int num_node) : num_node(num_node) {
+        graph.resize(num_node);
+    }
+
+    // fromからtoへ向かう容量cap、コストcostの辺をグラフに追加する
+    void add_edge(unsigned int from, unsigned int to, long long cap,
+                  long long cost) {
+        graph.at(from).emplace_back(
+            Edge(to, 0, cap, cost, graph.at(to).size(), false));
+        graph.at(to).emplace_back(
+            Edge(from, cap, cap, -cost, graph.at(from).size() - 1, true));
+        have_negative_cost |= cost < 0;
+    }
+
+    // sからtへの流量fの最小費用流を求める
+    // 流せない場合は-1を返す
+    ll run(const unsigned int source, const unsigned int sink, long long flow) {
+        ll u = flow;
+
+        // 負閉路がある場合、先に負閉路にそって流しておく
+        // 負辺があっても負閉路ない場合はこの処理をskipしていい
+        if(have_negative_cost) {
+            remove_negative_cycles(source);
+        }
+
+        std::vector<int> prev_v(num_node, -1),
+            prev_e(num_node, -1); // 直前の頂点と辺のidx
+        std::vector<long long> potential(num_node, 0); // ポテンシャル
+
+        // 負の辺がある場合、ポテンシャルをベルマンフォードで求めておく
+        // 負の辺がない場合はこの処理をskipしていい
+        if(have_negative_cost) {
+            potential.assign(num_node, INT_MAX);
+            potential.at(source) = 0;
+            while(true) {
+                bool updated = false;
+                for(int v = 0; v < num_node; ++v) {
+                    for(auto &e : graph.at(v)) {
+                        if(e.cap - e.flow > 0) {
+                            if(potential.at(v) == INT_MAX) {
+                                continue;
+                            }
+                            if(potential.at(e.to) > potential.at(v) + e.cost) {
+                                potential.at(e.to) = potential.at(v) + e.cost;
+                                updated = true;
+                            }
+                        }
+                    }
+                }
+                if(not updated) {
+                    break;
+                }
+            }
+        }
+
+        while(flow > 0) {
+            // ダイクストラ法を用いてポテンシャルを更新する
+            std::priority_queue<std::pair<int, int>,
+                                std::vector<std::pair<int, int>>,
+                                std::greater<std::pair<int, int>>>
+                que;
+            std::vector<long long> distance(num_node,
+                                            LINF); // 最短距離
+
+            distance.at(source) = 0;
+            que.push(std::make_pair(0, source));
+            while(not que.empty()) {
+                std::pair<int, int> p =
+                    que.top(); // firstは最短距離、secondは頂点の番号
+                que.pop();
+                int v = p.second;
+                if(distance.at(v) < p.first) {
+                    continue;
+                }
+                for(int i = 0; i < graph.at(v).size(); ++i) {
+                    Edge &e = graph.at(v).at(i);
+                    if(e.cap - e.flow > 0 and
+                       distance.at(e.to) > distance.at(v) + e.cost +
+                                               potential.at(v) -
+                                               potential.at(e.to)) {
+                        distance.at(e.to) = distance.at(v) + e.cost +
+                                            potential.at(v) -
+                                            potential.at(e.to);
+                        prev_v.at(e.to) = v;
+                        prev_e.at(e.to) = i;
+                        que.push(std::make_pair(distance.at(e.to), e.to));
+                    }
+                }
+            }
+
+            // これ以上流せない
+            if(distance[sink] == LINF) {
+                return u - flow;
+            }
+            for(int v = 0; v < num_node; ++v) {
+                potential.at(v) += distance.at(v);
+            }
+
+            // source-sink間で流せる量を求める
+            long long d = flow;
+            for(int v = sink; v != source; v = prev_v.at(v)) {
+                auto &e = graph.at(prev_v.at(v)).at(prev_e.at(v));
+                d = std::min(d, e.cap - e.flow);
+            }
+
+            flow -= d;
+            for(int v = sink; v != source; v = prev_v.at(v)) {
+                Edge &e = graph.at(prev_v.at(v)).at(prev_e.at(v));
+                e.flow += d;
+                graph.at(v).at(e.rev).flow -= d;
+            }
+        }
+        return flow;
+    }
+
+    // 最小費用を取得する
+    int min_cost_flow() {
+        int cost = 0;
+        for(int u = 0; u < graph.size(); ++u) {
+            for(int i = 0; i < graph.at(u).size(); ++i) {
+                Edge &e = graph.at(u).at(i);
+                if(not e.is_rev) {
+                    cost += e.flow * e.cost;
+                }
+            }
+        }
+        return cost;
+    }
+
+  private:
+    // 負閉路を除去する
+    void remove_negative_cycles(const unsigned int source) {
+        while(true) {
+            // bellman-fordでsourceからの最短路を求める
+            std::vector<int> prev_v(num_node, -1),
+                prev_e(num_node, -1); // 直前の頂点と辺のidx
+            std::vector<long long> distance(num_node, LINF);
+            distance.at(source) = 0;
+
+            int negative_cycle_idx = -1;
+            for(int num = 0; num < num_node; ++num) {
+                for(int u = 0; u < graph.size(); ++u) {
+                    for(int i = 0; i < graph.at(u).size(); ++i) {
+                        Edge &e = graph.at(u).at(i);
+
+                        if(distance.at(u) == LINF) {
+                            continue;
+                        }
+
+                        long long new_dist = distance.at(u) + e.cost;
+                        if(e.cap - e.flow > 0 and
+                           distance.at(e.to) > new_dist) {
+                            distance.at(e.to) = new_dist;
+                            prev_v.at(e.to) = u;
+                            prev_e.at(e.to) = i;
+
+                            if(num == num_node - 1) {
+                                negative_cycle_idx = e.to;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 負閉路がない
+            if(negative_cycle_idx == -1) {
+                return;
+            }
+
+            long long d = LINF;
+            std::vector<bool> used(num_node, false);
+            int u = negative_cycle_idx;
+            while(not used.at(u)) {
+                used.at(u) = true;
+                const Edge &e = graph.at(prev_v.at(u)).at(prev_e.at(u));
+                d = std::min(d, e.cap - e.flow);
+                u = prev_v.at(u);
+            }
+
+            assert(d != 0);
+
+            std::fill(used.begin(), used.end(), false);
+            // 閉路の開始点から見ていく
+            while(not used.at(u)) {
+                used.at(u) = true;
+                Edge &e = graph.at(prev_v.at(u)).at(prev_e.at(u));
+                e.flow += d;
+                graph.at(e.to).at(e.rev).flow -= d;
+                u = prev_v.at(u);
+            }
+        }
+    }
+};

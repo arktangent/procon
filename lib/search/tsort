@@ -1,0 +1,22 @@
+// トポロジカルソート
+int n, m;
+const int max_n = 1e5 + 10;
+ 
+vector<int> g[max_n];
+bool used[max_n];
+ 
+vector<int> v;
+ 
+void dfs(int u){
+	if(used[u]) return;
+	used[u] = true;
+	for(int i: g[u]) dfs(i);
+	//帰りがけ順で追加
+	v.push_back(u);
+}
+ 
+void tsort(){
+	for(int i = 0; i < n; i++) dfs(i);
+	reverse(v.begin(), v.end());
+}
+ 

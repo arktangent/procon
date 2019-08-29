@@ -1,0 +1,63 @@
+
+struct edge {
+    ll to, cap, rev;
+};
+ struct Dinic {
+    vector<vector<edge>> G;
+    VL level, iter;
+    ll N;
+
+    Dinic(ll size) : N(size) { init(size); };
+
+    void init(ll size) { G.resize(N); }
+
+    void add_edge(ll from, ll to, ll cap) {
+        G[from].push_back({to, cap, (ll)G[to].size()});
+        G[to].push_back({from, 0, (ll)G[from].size() - 1});
+    }
+    void bfs(ll s) {
+        level.assign(N, -1);
+        queue<ll> q;
+        level[s] = 0;
+        q.push(s);
+        while(!q.empty()) {
+            ll now = q.front();
+            q.pop();
+            FOREACH(e, G[now]) {
+                if(e.cap > 0 && level[e.to] == -1) {
+                    level[e.to] = level[now] + 1;
+                    q.push(e.to);
+                }
+            }
+        }
+    }
+
+    ll dfs(ll now, ll t, ll f) {
+        if(now == t) return f;
+        for(ll &i = iter[now]; i < G[now].size(); i++) {
+            edge &e = G[now][i];
+            if(e.cap > 0 && level[now] < level[e.to]) {
+                ll d = dfs(e.to, t, min(f, e.cap));
+                if(d > 0) {
+                    e.cap -= d;
+                    G[e.to][e.rev].cap += d;
+                    return d;
+                }
+            }
+        }
+        return 0;
+    }
+
+    ll max_flow(ll s, ll t) {
+        ll flow = 0;
+        while(1) {
+            bfs(s);
+            if(level[t] < 0) return flow;
+            iter.assign(N, 0);
+            ll f;
+            while((f = dfs(s, t, LINF)) > 0) {
+                flow += f;
+            }
+        }
+    }
+};

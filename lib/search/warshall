@@ -1,7 +1,7 @@
-ll num = 10;
+ll N, M;
+ll d[300][300];
 
 void warshall_floyd() {
-    REP(k, num) REP(i, num) REP(j, num) {
-        d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
-    }
+    REP(i, N) d[i][i] = 0;
+    REP(k, N) REP(i, N) REP(j, N) { d[i][j] = min(d[i][j], d[i][k] + d[k][j]); }
 }

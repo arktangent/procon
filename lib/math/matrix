@@ -19,3 +19,25 @@ vector<VL> matpow(vector<VL> m, ll n) {
     if(n & 1) res = matmul(m, res);
     return res;
 }
+
+using vec = vector<mint>;
+using mat = vector<vec>;
+
+mat matmul(const mat &A, const mat &B) {
+    mat ret(A.size(), vec(B[0].size()));
+    REP(i, A.size()) REP(j, B[0].size()) REP(k, B.size()) {
+        ret[i][j] += A[i][k] * B[k][j];
+    }
+    return ret;
+}
+
+mat matpow(mat A, ll n) {
+    mat ret(A.size(), vec(A.size()));
+    REP(i, A.size()) ret[i][i] = 1;
+    while(n) {
+        if(n & 1) ret = matmul(ret, A);
+        A = matmul(A, A);
+        n >>= 1;
+    }
+    return ret;
+}

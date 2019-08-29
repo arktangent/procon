@@ -1,0 +1,59 @@
+struct SCC {
+    ll V, cnt;
+    vector<vector<ll>> G, rG, graph;
+    vector<ll> vs, cmp, sz;
+    vector<bool> used, in;
+    SCC(ll node_size) : V(node_size), G(V), rG(V), cmp(V), used(V, false) {}
+    void add_edge(ll from, ll to) {
+        G[from].push_back(to);
+        rG[to].push_back(from);
+    }
+    void dfs(ll u) {
+        used[u] = true;
+        for(ll v : G[u]) {
+            if(!used[v]) {
+                dfs(v);
+            }
+        }
+        vs.push_back(u);
+    }
+    void dfs(ll u, const ll k) {
+        used[u] = true;
+        cmp[u] = k;
+        for(ll v : rG[u]) {
+            if(!used[v]) {
+                dfs(v, k);
+            }
+        }
+    }
+    ll solve() { //ã≠òAåãê¨ï™ÇÃêîÇï‘Ç∑
+        for(ll i = 0; i < V; i++) {
+            if(!used[i]) {
+                dfs(i);
+            }
+        }
+        fill(used.begin(), used.end(), false);
+        cnt = 0;
+        for(ll i = V - 1; i >= 0; i--) {
+            if(!used[vs[i]]) {
+                dfs(vs[i], cnt++);
+            }
+        }
+        return cnt;
+    }
+    vector<vector<ll>> make_graph() {
+        graph.resize(cnt);
+        sz.resize(cnt);
+        in.resize(cnt);
+        for(int i = 0; i < V; i++) {
+            sz[cmp[i]]++;
+            for(int v : G[i]) {
+                if(cmp[i] != cmp[v]) {
+                    in[cmp[v]] = true;
+                    graph[cmp[i]].push_back(cmp[v]);
+                }
+            }
+        }
+        return graph;
+    }
+};

@@ -22,3 +22,36 @@ int next_combination(int sub) {
     int x = sub & -sub, y = sub + x;
     return (((sub & ~y) / x) >> 1) | y;
 }
+
+
+const ll NMAX = 1e2;
+ll com[NMAX + 1][NMAX + 1];
+
+void cominit() {
+    com[0][0] = 1;
+    for(int i = 1; i <= NMAX; ++i) {
+        for(int j = 0; j <= i; ++j) {
+            com[i][j] += com[i - 1][j];
+            if(j > 0) com[i][j] += com[i - 1][j - 1];
+        }
+    }
+}
+
+ll comb(ll n, ll r) {
+    if(n < 0 || r < 0 || n < r) return 0;
+    if(n == r || !r) return 1;
+    return com[n][r];
+}
+
+// comb probablity
+double C[1002][1002];
+
+void cominit() {
+    C[0][0] = 1.0;
+    REP(i, 1001) REP(j, 1001) {
+        C[i + 1][j] += C[i][j] / 2.0;
+        C[i + 1][j + 1] += C[i][j] / 2.0;
+    }
+}
+
+double comb(ll n, ll k) { return C[n][k]; }

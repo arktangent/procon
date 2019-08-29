@@ -93,3 +93,34 @@ std::vector<std::string> split(const std::string &s, const T &separator, bool ig
     }
     return v;
 }
+
+// sign 
+ll sign(ll A) { return (A > 0) - (A < 0); }
+
+// Replace
+string ReplaceString(std::string String1, std::string String2, std::string String3) {
+    std::string::size_type Pos(String1.find(String2));
+
+    while(Pos != std::string::npos) {
+        String1.replace(Pos, String2.length(), String3);
+        Pos = String1.find(String2, Pos + String3.length());
+    }
+
+    return String1;
+}
+
+string ReplaceString(string String1 // uŤˇŚÎŰ
+                     ,
+                     string String2 // őÎŰ
+                     ,
+                     string String3 // uŤˇŚéŕe
+) {
+    string::size_type Pos(String1.find(String2));
+
+    while(Pos != string::npos) {
+        String1.replace(Pos, String2.length(), String3);
+        Pos = String1.find(String2, Pos + String3.length());
+    }
+
+    return String1;
+}
