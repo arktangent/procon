@@ -39,3 +39,45 @@ void dfs(ll depth, ll now, ll cost) {
         went[i] = false;
     }
 }
+
+
+//Euler Tour
+VL tree[100000];
+ll rev[100000],in[100000],out[100000],ptr;
+
+void dfs(ll idx, ll par=-1){
+    rev[ptr]=idx;
+    in[idx]=ptr++;
+    FOREACH(next,tree[idx])if(next!=par)dfs(next,idx);
+    out[idx]=ptr;
+}
+
+//All tree dp
+const int nmax = 100000;
+VL G[nmax];
+ll dist[nmax], ans[nmax];
+
+void dfs1(ll now, ll par) {
+    FOREACH(to, G[now]) {
+        if(to == par) continue;
+        dfs1(to, now);
+        dist[now] = max(dist[now], dist[to] + 1);
+    }
+}
+
+void dfs2(ll now, ll par, ll d_par) {
+    vector<PL> d_now;
+    d_now.emplace_back(0, -1);
+    FOREACH(to, G[now]) {
+        if(to == par)
+            d_now.emplace_back(d_par + 1, par);
+        else
+            d_now.emplace_back(dist[to] + 1, to);
+    }
+    sort(rAll(d_now));
+    ans[now] = d_now[0].fi;
+    FOREACH(to, G[now]) {
+        if(to == par) continue;
+        dfs2(to, now, d_now[d_now[0].se == to].fi);
+    }
+}

@@ -1,4 +1,4 @@
-// sign -,0,+判別
+// sign 
 ll sign(ll A) { return (A > 0) - (A < 0); }
 
 // Replace

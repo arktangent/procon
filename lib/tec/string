@@ -109,11 +109,11 @@ string ReplaceString(std::string String1, std::string String2, std::string Strin
     return String1;
 }
 
-string ReplaceString(string String1 // uŤˇŚÎŰ
+string ReplaceString(string String1 //
                      ,
-                     string String2 // őÎŰ
+                     string String2 // 
                      ,
-                     string String3 // uŤˇŚéŕe
+                     string String3 // 
 ) {
     string::size_type Pos(String1.find(String2));
 
