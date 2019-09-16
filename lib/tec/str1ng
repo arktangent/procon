@@ -1,27 +1,27 @@
-//find program
+// find program
 vector<string> split(string str, char del) {
     ll first = 0;
     ll last = str.find_first_of(del);
- 
+
     vector<string> result;
- 
-    while (first < str.size()) {
+
+    while(first < str.size()) {
         string subStr(str, first, last - first);
- 
+
         result.push_back(subStr);
- 
+
         first = last + 1;
         last = str.find_first_of(del, first);
- 
-        if (last == string::npos) {
+
+        if(last == string::npos) {
             last = str.size();
         }
     }
- 
+
     return result;
 }
 
-//for program
+// for program
 std::vector<std::string> split(std::string str, char del) {
     std::vector<std::string> result;
     std::string subStr;
@@ -41,18 +41,17 @@ std::vector<std::string> split(std::string str, char del) {
 
 vector<ll> find_all(const std::string str, const std::string subStr) {
     vector<ll> result;
- 
+
     ll subStrSize = subStr.size();
     ll pos = str.find(subStr);
- 
-    while (pos != std::string::npos) {
+
+    while(pos != std::string::npos) {
         result.push_back(pos);
         pos = str.find(subStr, pos + subStrSize);
     }
- 
+
     return result;
 }
-
 
 template <class T>
 std::vector<std::string> split(const std::string &s, const T &separator, bool ignore_empty = 0, bool split_empty = 0) {
@@ -94,7 +93,7 @@ std::vector<std::string> split(const std::string &s, const T &separator, bool ig
     return v;
 }
 
-// sign 
+// sign
 ll sign(ll A) { return (A > 0) - (A < 0); }
 
 // Replace
@@ -111,9 +110,9 @@ string ReplaceString(std::string String1, std::string String2, std::string Strin
 
 string ReplaceString(string String1 //
                      ,
-                     string String2 // 
+                     string String2 //
                      ,
-                     string String3 // 
+                     string String3 //
 ) {
     string::size_type Pos(String1.find(String2));
 
@@ -123,4 +122,11 @@ string ReplaceString(string String1 //
     }
 
     return String1;
+}
+
+//空白も含めて読み込みたい場合getlineを使おう
+cin.ignore();
+REP(i, L + 1) {
+    getline(cin, amida[i]);
+    cout << amida[i] << "\n";
 }

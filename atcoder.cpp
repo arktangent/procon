@@ -3,6 +3,7 @@
 using namespace std;
 
 #define int long long
+// #define double long double
 #define FOR(i, a, b) for(ll i = (a); i < (b); ++i)
 #define FORR(i, a, b) for(ll i = (a); i > (b); --i)
 #define REP(i, n) for(ll i = 0; i < (n); ++i)
@@ -16,6 +17,7 @@ using namespace std;
 #define se second
 #define All(a) (a).begin(), (a).end()
 #define rAll(a) (a).rbegin(), (a).rend()
+
 template <typename T = long long> inline T IN() {
     T x;
     cin >> x;
@@ -54,32 +56,34 @@ template <typename A, size_t N, typename T>
 void Fill(A (&array)[N], const T &val) {
     std::fill((T *)array, (T *)(array + N), val);
 }
+
 template <typename T> using PQG = priority_queue<T, vector<T>, greater<T>>;
 template <typename T> using PQ = priority_queue<T>;
 
 typedef long long ll;
-typedef pair<ll, ll> PL;
-typedef vector<PL> VPL;
 typedef vector<ll> VL;
 typedef vector<VL> VVL;
+typedef pair<ll, ll> PL;
+typedef vector<PL> VPL;
+typedef vector<bool> VB;
 typedef vector<double> VD;
+typedef vector<string> VS;
 
 const int INF = 1e9;
 const int MOD = 1e9 + 7;
-const ll LINF = 1e18;
-const double PI = atan(1.0) * 4.0;
-const ll dx[] = {1, 0, -1, 0};
-const ll dy[] = {0, 1, 0, -1};
+// const int MOD = 998244353;
+const ll LINF = 5e18;
+// const double PI = atan(1.0) * 4.0;
+const ll dx[] = {1, 1, 0, -1, -1, -1, 0, 1};
+const ll dy[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793238
 
-void cinfast() {
-    cin.tie(0);
-    ios::sync_with_stdio(false);
-}
-
-string S, t;
-
 signed main() {
-    cin >> S >> t;
-    cout << S << t << "\n";
+    LCIN(A, B);
+    ll ans = 0, now = abs(A - B);
+    ans += now / 10;
+    now %= 10;
+    ans += now / 5;
+    now %= 5;
+    cout << ans + now << "\n";
 }

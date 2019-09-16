@@ -23,3 +23,5 @@ template <typename T> map<T, int> dict(const vector<T> &v) {
     for(int i = 0; i < (int)v.size(); i++) res[v[i]] = i;
     return res;
 }
+
+//二次元

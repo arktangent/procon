@@ -1,35 +1,33 @@
-/*
-#include <bits/stdc++.h>
 //í èÌ
 struct UnionFind {
-    V par,rank;
-    UnionFind(int size){
-        init(size);
+    VL par, rank;
+    UnionFind(int size) { init(size); }
+    void init(int size) {
+        REP(i, size) {
+            par.push_back(i);
+            rank.push_back(0);
+        }
     }
-    void init(int size){
-        REP(i,size){par.push_back(i); rank.push_back(0);}
-    }
-    int root(int x){
-        if(par[x]==x) return x;
-        else{
+    int root(int x) {
+        if(par[x] == x)
+            return x;
+        else {
             int r = root(par[x]);
-            return par[x]=r;
+            return par[x] = r;
         }
     }
-    void unite(int x,int y){
-        x=root(x);
-        y=root(y);
-        if(x==y) return;
-        if(rank[x]<rank[y]){
-            swap(x,y);
-        }else{
-            if(rank[x]==rank[y]) rank[x]++;
+    void unite(int x, int y) {
+        x = root(x);
+        y = root(y);
+        if(x == y) return;
+        if(rank[x] < rank[y]) {
+            swap(x, y);
+        } else {
+            if(rank[x] == rank[y]) rank[x]++;
         }
-        par[y]=x;
+        par[y] = x;
     }
-    bool same(int x, int y){
-        return root(x)==root(y);
-    }
+    bool same(int x, int y) { return root(x) == root(y); }
 };
 
 // sizeóp

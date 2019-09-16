@@ -23,6 +23,10 @@ int next_combination(int sub) {
     return (((sub & ~y) / x) >> 1) | y;
 }
 
+//部分集合
+ll subpart(ll sup,sub){
+    return (sub-1)&sup;
+}
 
 const ll NMAX = 1e2;
 ll com[NMAX + 1][NMAX + 1];
