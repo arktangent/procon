@@ -1,3 +1,15 @@
+string func(int num) {
+    string str = "";
+    while(num >= 0) {
+        int mod = num % 26;
+        str += char(mod + 'a');
+        num -= mod;
+        num = num / 26 - 1;
+    }
+    reverse(str.begin(), str.end());
+    return str;
+}
+
 // find program
 vector<string> split(string str, char del) {
     ll first = 0;

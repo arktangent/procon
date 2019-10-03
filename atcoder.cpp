@@ -11,7 +11,9 @@ using namespace std;
 #define FOREACH(x, a) for(auto &(x) : (a))
 #define VECCIN(x)                                                              \
     for(auto &youso_ : (x)) cin >> youso_
-#define bitcnt __builtin_popcount
+#define bitcnt(x) __builtin_popcount(x)
+#define lbit(x) __builtin_ffsll(x)
+#define rbit(x) __builtin_clzll(x)
 #define SZ(x) ((ll)(x).size())
 #define fi first
 #define se second
@@ -78,12 +80,53 @@ const ll dx[] = {1, 1, 0, -1, -1, -1, 0, 1};
 const ll dy[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793238
 
+ll N, M;
+ll G[701][701];
+ll col[701];
+bool dp[701];
+ll cnum[2];
+bool bipartite = true;
+
+void dfs(ll now, ll c) {
+    col[now] = c;
+    cnum[c]++;
+    REP(to, N) {
+        if(to == now || !G[now][to]) continue;
+        if(col[to] == -1)
+            dfs(to, c ^ 1);
+        else if(col[to] != c ^ 1)
+            bipartite = false;
+    }
+}
+
 signed main() {
-    LCIN(A, B);
-    ll ans = 0, now = abs(A - B);
-    ans += now / 10;
-    now %= 10;
-    ans += now / 5;
-    now %= 5;
-    cout << ans + now << "\n";
+    cin >> N >> M;
+    REP(i, N) REP(j, N) G[i][j] = 1;
+    REP(i, M) {
+        LCIN(A, B);
+        A--, B--;
+        G[A][B] = 0, G[B][A] = 0;
+    }
+    Fill(col, -1);
+    VPL cnums;
+    REP(i, N) {
+        if(col[i] != -1) continue;
+        Fill(cnum, 0);
+        dfs(i, 0);
+        cnums.emplace_back(cnum[0], cnum[1]);
+        if(!bipartite) eputs(-1);
+    }
+    dp[0] = 1;
+    REP(i, cnums.size()) REPR(j, N) {
+        if(!dp[j]) continue;
+        dp[j] = 0;
+        dp[j + cnums[i].fi] = 1;
+        dp[j + cnums[i].se] = 1;
+    }
+    ll dif = N, left = -1;
+    REP(i, N + 1) {
+        if(!dp[i]) continue;
+        if(dif > abs(i - (N / 2))) dif = abs(i - (N / 2)), left = i;
+    }
+    cout << (left - 1) * left / 2 + (N - left - 1) * (N - left) / 2 << "\n";
 }

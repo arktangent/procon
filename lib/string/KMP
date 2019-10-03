@@ -1,0 +1,69 @@
+//trans N
+struct KMP {
+    string pat;
+    vector<int> fail;
+
+    // construct
+    KMP(const string &p) { init(p); }
+    void init(const string &p) {
+        pat = p;
+        int m = (int)pat.size();
+        fail.assign(m+1, -1);
+        for (int i = 0, j = -1; i < m; ++i) {
+            while (j >= 0 && pat[i] != pat[j]) j = fail[j];
+            fail[i+1] = ++j;
+        }
+    }
+
+    // the period of S[0:i]
+    int period(int i) { return i - fail[i]; }
+    
+    // the index i such that S[i:] has the exact prefix p
+    vector<int> match(const string &S) {
+        int n = (int)S.size(), m = (int)pat.size();
+        vector<int> res;
+        for (int i = 0, k = 0; i < n; ++i) {
+            while (k >= 0 && S[i] != pat[k]) k = fail[k];
+            ++k;
+            if (k == m) res.push_back(i-m+1);
+        }
+        return res;
+    }
+};
+
+//trans logN
+struct KMP {
+    string pat;
+    vector<int> fail;
+
+    // construct
+    KMP(const string &p) { init(p); }
+    void init(const string &p) {
+        pat = p;
+        int m = (int)pat.size();
+        fail.assign(m + 1, -1);
+        for(int i = 0, j = -1; i < m; ++i) {
+            while(j >= 0 && pat[i] != pat[j]) j = fail[j];
+            ++j;
+            if(pat[i + 1] == pat[j])
+                fail[i + 1] = fail[j];
+            else
+                fail[i + 1] = j;
+        }
+    }
+
+    // the period of S[0:i]
+    int period(int i) { return i - fail[i]; }
+
+    // the index i such that S[i:] has the exact prefix p
+    vector<int> match(const string &S) {
+        int n = (int)S.size(), m = (int)pat.size();
+        vector<int> res;
+        for(int i = 0, k = 0; i < n; ++i) {
+            while(k >= 0 && S[i] != pat[k]) k = fail[k];
+            ++k;
+            if(k == m) res.push_back(i - m + 1);
+        }
+        return res;
+    }
+};
