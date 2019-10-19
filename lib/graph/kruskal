@@ -1,11 +1,42 @@
+// size用
+struct UnionFind {
+    vector<ll> par;
+    vector<ll> sizes;
+
+    UnionFind(ll n) : par(n), sizes(n, 1) { REP(i, n) par[i] = i; }
+
+    ll find(ll x) {
+        if(x == par[x]) return x;
+        return par[x] = find(par[x]);
+    }
+
+    void unite(ll x, ll y) {
+        x = find(x);
+        y = find(y);
+
+        if(x == y) return;
+
+        if(sizes[x] < sizes[y]) swap(x, y);
+
+        par[y] = x;
+        sizes[x] += sizes[y];
+        sizes[y] = 0;
+    }
+
+    bool same(ll x, ll y) { return find(x) == find(y); }
+
+    ll size(ll x) { return sizes[find(x)]; }
+};
+
 struct edge {
-    ll from, to,from;
+    ll from, to, cost;
     bool operator<(const edge &another) const { return cost < another.cost; };
     bool operator>(const edge &another) const { return cost > another.cost; };
 };
 vector<edge> es;
 
-ll kruskal(){
+
+ll kruskal() {
     ll res = 0;
     auto uf = UnionFind(N);
     sort(All(es));
@@ -13,6 +44,9 @@ ll kruskal(){
         edge e = es[i];
         if(!uf.same(e.from, e.to)) {
             uf.unite(e.from, e.to);
+            G[e.from].emplace_back(e.to, e.cost);
+            G[e.to].emplace_back(e.from, e.cost);
+            used[i] = true;
             res += e.cost;
         }
     }

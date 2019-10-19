@@ -12,7 +12,31 @@ int dfs(int cur, int a, int b, int c) {
     return min({a1, a2, a3, a4});
 }
 
+//find roop
+VVL G(1000);
+VL hist;
+bool used[1000], finished[1000];
+ll start = -1;
+
+void findroop(int v) {
+    used[v] = true;
+    hist.emplace_back(v);
+    FOREACH(to, G[v]) {
+        if(finished[to]) continue;
+        if(used[to]) {
+            start = to;
+            return;
+        }
+        findroop(to);
+        if(start != -1) return;
+    }
+    hist.pop_back();
+    finished[v] = true;
+}
+
 //二部グラフ判定
+ll color[NMAX]
+
 bool bpdfs(ll v, ll c) {
     color[v] = c;
     FOREACH(next, g[v]) {

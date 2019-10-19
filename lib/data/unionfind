@@ -59,6 +59,7 @@ struct UnionFind {
 
     ll size(ll x) { return sizes[find(x)]; }
 };
+
 //d‚İ•t‚«
 template <class Abel> struct UnionFind {
     VL par, rank;
