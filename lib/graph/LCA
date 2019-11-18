@@ -1,3 +1,52 @@
+// doubling build:n query:logn
+struct LCA {
+    int n, h;
+    vector<vector<int>> G, par;
+    vector<int> dep;
+    LCA() {}
+    LCA(int n) : n(n), G(n), dep(n) {
+        h = 1;
+        while((1 << h) <= n) h++;
+        par.assign(n, vector<int>(h, -1));
+    }
+
+    void add_edge(int u, int v) {
+        G[u].emplace_back(v);
+        G[v].emplace_back(u);
+    }
+
+    void dfs(int v, int p, int d) {
+        par[v][0] = p;
+        dep[v] = d;
+        for(int u : G[v])
+            if(u != p) dfs(u, v, d + 1);
+    }
+
+    void build(int r = 0) {
+        dfs(r, -1, 0);
+        for(int k = 0; k + 1 < h; k++)
+            for(int v = 0; v < n; v++)
+                if(~par[v][k]) par[v][k + 1] = par[par[v][k]][k];
+    }
+
+    int lca(int u, int v) {
+        if(dep[u] > dep[v]) swap(u, v);
+        REP(k, h) {
+            if(((dep[v] - dep[u]) >> k) & 1) v = par[v][k];
+        }
+        if(u == v) return u;
+
+        for(int k = h - 1; k >= 0; k--)
+            if(par[u][k] != par[v][k]) u = par[u][k], v = par[v][k];
+
+        return par[u][0];
+    }
+
+    int distance(int u, int v) { return dep[u] + dep[v] - dep[lca(u, v)] * 2; }
+};
+
+
+// rmq build:n query:logn
 struct LCA {
     const int lg = 12;
     const int sz = 1 << lg;
@@ -6,8 +55,7 @@ struct LCA {
     vector<int> P, D, E, A, B, T, ht;
     vector<vector<int>> G, dat;
     LCA(int n)
-        : n(n), P(n, -1), D(n), E(n * 2, 0), A(n * 2, -1), B(n * 2 / lg + 1),
-          T(sz, 0), G(n) {}
+        : n(n), P(n, -1), D(n), E(n * 2, 0), A(n * 2, -1), B(n * 2 / lg + 1), T(sz, 0), G(n) {}
 
     void add_edge(int u, int v) {
         G[u].emplace_back(v);
@@ -100,5 +148,9 @@ struct LCA {
         int x = D[l], y = D[r];
         int m = rmq(x, y);
         return m == x ? l : A[m];
+    }
+
+    int distance(int u, int v) {
+        return E[D[u]] + E[D[v]] - E[D[lca(u, v)]] * 2;
     }
 };

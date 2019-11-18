@@ -42,8 +42,58 @@ mat matpow(mat A, ll n) {
     return ret;
 }
 
-//Gausian
+// kitamasa(c, u, v)
+template <class T>
+std::vector<T> kitamasa(const vector<T> &c, const vector<T> &u, const vector<T> &v) {
+    size_t k = c.size();
+    std::vector<T> r(2 * k - 1);
+    for(int i = 0; i < k; i++)
+        for(int j = 0; j < k; j++) r[i + j] += u[i] * v[j];
+    for(int i = 2 * k - 2; i >= k; i--)
+        for(int j = 0; j < k; j++) r[i - k + j] += r[i] * c[j];
+    r.resize(k);
+    return r;
+}
 
+//kitamasa struct
+template <typename R> struct Kitamasa {
+    using VR = vector<R>;
+    VR c;
+    vector<VR> rs;
+    int m;
+
+    Kitamasa(const VR &C) : c(C), rs(1), m(c.size()) {
+        rs[0].assign(2 * m + 1, R::add_identity());
+        rs[0][1] = R::mul_identity();
+    }
+
+    VR merge(const VR &x, const VR &y) {
+        VR z(2 * m + 1, R::add_identity());
+        for(int i = 1; i <= m; i++)
+            for(int j = 1; j <= m; j++) z[i + j] = z[i + j] + (x[i] * y[j]);
+
+        for(int i = 2 * m; i > m; z[i--] = R::add_identity())
+            for(int j = 1; j <= m; j++) z[i - j] = z[i - j] + (c[m - j] * z[i]);
+        return z;
+    }
+
+    R calc(const VR &A, long long n) {
+        assert((int)A.size() == m);
+        VR res(rs[0]);
+        for(int i = 0; n; i++, n >>= 1) {
+            if(i >= (int)rs.size())
+                rs.emplace_back(merge(rs[i - 1], rs[i - 1]));
+            if(~n & 1) continue;
+            res = merge(res, rs[i]);
+        }
+        R ans = R::add_identity();
+        for(int i = 1; i <= m; i++) ans = ans + (res[i] * A[i - 1]);
+        return ans;
+    }
+};
+
+
+//Gausian
 using D = double;
 const D EPS = 1e-10;
 
