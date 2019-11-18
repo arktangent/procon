@@ -19,6 +19,12 @@ using namespace std;
 #define se second
 #define All(a) (a).begin(), (a).end()
 #define rAll(a) (a).rbegin(), (a).rend()
+#define PERM(c)                                                                \
+    sort(All(c));                                                              \
+    for(bool cp = true; cp; cp = next_permutation(All(c)))
+#define MKORDER(n)                                                             \
+    vector<ll> od(n);                                                          \
+    iota(All(od), 0LL);
 
 template <typename T = long long> inline T IN() {
     T x;
@@ -75,31 +81,9 @@ const int INF = 1e9;
 const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const ll LINF = 1e18;
-// const double PI = atan(1.0) * 4.0;
-const ll dx[] = {1, 1, 0, -1, -1, -1, 0, 1};
-const ll dy[] = {0, 1, 1, 1, 0, -1, -1, -1};
+const double PI = atan(1.0) * 4.0;
+const ll dw[] = {1, 1, 0, -1, -1, -1, 0, 1};
+const ll dh[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793238
 
-signed main() {
-    LCIN(N);
-    VL S(1 << N);
-    VECCIN(S);
-    sort(All(S));
-    multiset<ll> lef;
-    REP(i, 1 << N) lef.emplace(S[i]);
-    VL now;
-    now.push_back(S[(1 << N) - 1]);
-    REP(i, N) {
-        VL tmp = now;
-        FOREACH(val, tmp) {
-            auto sel = lef.lower_bound(val);
-            if(sel == lef.begin()) eputs("No\n");
-            sel--;
-            now.emplace_back(*sel);
-            lef.erase(sel);
-        }
-        sort(rAll(now));
-    }
-    cout << "Yes"
-         << "\n";
-}
+signed main() {}
