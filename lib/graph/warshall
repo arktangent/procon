@@ -1,7 +1,11 @@
-ll N, M;
-ll d[300][300];
+
+ll N;
+ll dist[300][300];
+Fill(dist, LINF);
 
 void warshall_floyd() {
-    REP(i, N) d[i][i] = 0;
-    REP(k, N) REP(i, N) REP(j, N) { d[i][j] = min(d[i][j], d[i][k] + d[k][j]); }
+    REP(i, N) dist[i][i] = 0;
+    REP(k, N) REP(i, N) REP(j, N) {
+        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+    }
 }

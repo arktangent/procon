@@ -74,59 +74,32 @@ typedef vector<string> VS;
 const int INF = 1e9;
 const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
-const ll LINF = 5e18;
+const ll LINF = 1e18;
 // const double PI = atan(1.0) * 4.0;
 const ll dx[] = {1, 1, 0, -1, -1, -1, 0, 1};
 const ll dy[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793238
 
-ll N, M;
-ll G[701][701];
-ll col[701];
-bool dp[701];
-ll cnum[2];
-bool bipartite = true;
-
-void dfs(ll now, ll c) {
-    col[now] = c;
-    cnum[c]++;
-    REP(to, N) {
-        if(to == now || !G[now][to]) continue;
-        if(col[to] == -1)
-            dfs(to, c ^ 1);
-        else if(col[to] != c ^ 1)
-            bipartite = false;
-    }
-}
-
 signed main() {
-    cin >> N >> M;
-    REP(i, N) REP(j, N) G[i][j] = 1;
-    REP(i, M) {
-        LCIN(A, B);
-        A--, B--;
-        G[A][B] = 0, G[B][A] = 0;
-    }
-    Fill(col, -1);
-    VPL cnums;
+    LCIN(N);
+    VL S(1 << N);
+    VECCIN(S);
+    sort(All(S));
+    multiset<ll> lef;
+    REP(i, 1 << N) lef.emplace(S[i]);
+    VL now;
+    now.push_back(S[(1 << N) - 1]);
     REP(i, N) {
-        if(col[i] != -1) continue;
-        Fill(cnum, 0);
-        dfs(i, 0);
-        cnums.emplace_back(cnum[0], cnum[1]);
-        if(!bipartite) eputs(-1);
+        VL tmp = now;
+        FOREACH(val, tmp) {
+            auto sel = lef.lower_bound(val);
+            if(sel == lef.begin()) eputs("No\n");
+            sel--;
+            now.emplace_back(*sel);
+            lef.erase(sel);
+        }
+        sort(rAll(now));
     }
-    dp[0] = 1;
-    REP(i, cnums.size()) REPR(j, N) {
-        if(!dp[j]) continue;
-        dp[j] = 0;
-        dp[j + cnums[i].fi] = 1;
-        dp[j + cnums[i].se] = 1;
-    }
-    ll dif = N, left = -1;
-    REP(i, N + 1) {
-        if(!dp[i]) continue;
-        if(dif > abs(i - (N / 2))) dif = abs(i - (N / 2)), left = i;
-    }
-    cout << (left - 1) * left / 2 + (N - left - 1) * (N - left) / 2 << "\n";
+    cout << "Yes"
+         << "\n";
 }
