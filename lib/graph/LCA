@@ -7,7 +7,7 @@ struct LCA {
     LCA(int n) : n(n), G(n), dep(n) {
         h = 1;
         while((1 << h) <= n) h++;
-        par.assign(n, vector<int>(h, -1));
+        par.assign(h, vector<int>(n, -1));
     }
 
     void add_edge(int u, int v) {
@@ -16,7 +16,7 @@ struct LCA {
     }
 
     void dfs(int v, int p, int d) {
-        par[v][0] = p;
+        par[0][v] = p;
         dep[v] = d;
         for(int u : G[v])
             if(u != p) dfs(u, v, d + 1);
@@ -26,20 +26,20 @@ struct LCA {
         dfs(r, -1, 0);
         for(int k = 0; k + 1 < h; k++)
             for(int v = 0; v < n; v++)
-                if(~par[v][k]) par[v][k + 1] = par[par[v][k]][k];
+                if(~par[k][v]) par[k + 1][v] = par[k][par[k][v]];
     }
 
     int lca(int u, int v) {
         if(dep[u] > dep[v]) swap(u, v);
         REP(k, h) {
-            if(((dep[v] - dep[u]) >> k) & 1) v = par[v][k];
+            if(((dep[v] - dep[u]) >> k) & 1) v = par[k][v];
         }
         if(u == v) return u;
 
         for(int k = h - 1; k >= 0; k--)
-            if(par[u][k] != par[v][k]) u = par[u][k], v = par[v][k];
+            if(par[k][u] != par[k][v]) u = par[k][u], v = par[k][v];
 
-        return par[u][0];
+        return par[0][u];
     }
 
     int distance(int u, int v) { return dep[u] + dep[v] - dep[lca(u, v)] * 2; }

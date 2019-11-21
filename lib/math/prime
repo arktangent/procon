@@ -72,3 +72,14 @@ VL divisor(ll n) {
     }
     return res;
 }
+
+//レイヤーの数え上げ
+ll num[1001000];
+int iter = 0;
+for(int i = 1; i <= N;) {
+    int j = N / i;
+    if(i <= j)
+        num[iter++] = 1, ++i; // 前半
+    else
+        num[iter++] = N / j - i + 1, i = N / j + 1; // 後半
+}

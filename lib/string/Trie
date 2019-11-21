@@ -1,4 +1,5 @@
 
+//size_t 文字の種類数
 template <size_t X> struct Trie {
     struct Node {
         char c;
@@ -38,7 +39,7 @@ template <size_t X> struct Trie {
             if(v[pos].nxt[k] < 0) return -1;
             pos = v[pos].nxt[k];
         }
-        return pos;
+        return idx(pos);
     }
 
     int find(int pos, char c) { return v[pos].nxt[conv(c)]; }
@@ -47,3 +48,6 @@ template <size_t X> struct Trie {
 
     vector<int> idxs(int pos) { return pos < 0 ? vector<int>() : v[pos].idxs; }
 };
+
+auto f = [](char c) { return c - 'A'; };
+Trie<26> trie(f);
