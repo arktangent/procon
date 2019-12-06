@@ -142,3 +142,19 @@ REP(i, L + 1) {
     getline(cin, amida[i]);
     cout << amida[i] << "\n";
 }
+
+//桁数計算(OlogN)
+int GetLen(int x) {
+    int len = 0;
+    while(x != 0) {
+        x /= 10;
+        len++;
+    }
+    return len;
+}
+
+// O(1)
+std::vector<int> len(N + 1);
+for (int i = 1; i <= N; i++) {
+    len[i] = len[i / 10] + 1;
+}

@@ -49,5 +49,66 @@ template <size_t X> struct Trie {
     vector<int> idxs(int pos) { return pos < 0 ? vector<int>() : v[pos].idxs; }
 };
 
+//update
+template <size_t X> struct Trie {
+    struct Node {
+        char c;
+        array<int, X> nxt;
+        vector<int> idxs;
+        int idx;
+        Node(char c) : c(c), idx(-1) { fill(nxt.begin(), nxt.end(), -1); }
+    };
+
+    using F = function<int(char)>;
+    vector<Node> vs;
+    F conv;
+
+    Trie(F conv, char c = '$') : conv(conv) { vs.emplace_back(c); }
+
+    inline int &next(int i, int j) { return vs[i].nxt[j]; }
+
+    void add(const string &s, int x) {
+        int pos = 0;
+        for(int i = 0; i < (int)s.size(); i++) {
+            int k = conv(s[i]);
+            if(~next(pos, k)) {
+                pos = next(pos, k);
+                continue;
+            }
+            int npos = vs.size();
+            next(pos, k) = npos;
+            vs.emplace_back(s[i]);
+            pos = npos;
+        }
+        vs[pos].idx = x;
+        vs[pos].idxs.emplace_back(x);
+    }
+
+    //文字列丸ごと検索
+    int find(const string &s) {
+        int pos = 0;
+        for(int i = 0; i < (int)s.size(); i++) {
+            int k = conv(s[i]);
+            if(next(pos, k) < 0) return -1;
+            pos = next(pos, k);
+        }
+        return idx(pos);
+    }
+
+    //頂点移動
+    int move(int pos, char c) {
+        assert(pos < (int)vs.size());
+        return pos < 0 ? -1 : next(pos, conv(c));
+    }
+
+    //子供の数
+    int size() { return vs.size(); }
+
+    int idx(int pos) { return pos < 0 ? -1 : vs[pos].idx; }
+
+    //対応するパターンのindex
+    vector<int> idxs(int pos) { return pos < 0 ? vector<int>() : vs[pos].idxs; }
+};
+
 auto f = [](char c) { return c - 'A'; };
 Trie<26> trie(f);

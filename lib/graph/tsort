@@ -1,4 +1,4 @@
-// トポロジカルソート
+// トポロジカルソートdfs
 int n, m;
 const int max_n = 1e5 + 10;
  
@@ -19,4 +19,106 @@ void tsort(){
 	for(int i = 0; i < n; i++) dfs(i);
 	reverse(v.begin(), v.end());
 }
+
+//トポロジカルソートque
+struct TopologicalSort {
+    vector<set<int>> G;
+    vector<int> used, indeg, ps;
+
+    TopologicalSort() {}
+    TopologicalSort(int n) : G(n), used(n, 0), indeg(n, 0) {}
+
+    void add_edge(int s, int t) {
+        G[s].emplace(t);
+        indeg[t]++;
+    }
+
+    void bfs(int s) {
+        queue<int> que;
+        que.emplace(s);
+        used[s] = 1;
+        while(!que.empty()) {
+            int v = que.front();
+            que.pop();
+            ps.emplace_back(v);
+            for(int u : G[v]) {
+                indeg[u]--;
+                if(indeg[u] == 0 && !used[u]) {
+                    used[u] = 1;
+                    que.emplace(u);
+                }
+            }
+        }
+    }
+
+    vector<int> build() {
+        int n = G.size();
+        for(int i = 0; i < n; i++)
+            if(indeg[i] == 0 && !used[i]) bfs(i);
+        return ps;
+    }
+};
  
+ // 閉路検出
+vector<int> knuth_morris_pratt(const string &s) {
+    int n = s.size();
+    vector<int> kmp(n + 1, -1), mp(n + 1, -1);
+    for(int i = 0, j = -1; i < n; i++) {
+        while(~j && s[i] != s[j]) j = kmp[j];
+        kmp[i + 1] = mp[i + 1] = ++j;
+        if(i + 1 < n && s[i + 1] == s[j]) kmp[i + 1] = kmp[j];
+    }
+    return mp;
+}
+
+// INSERT ABOVE HERE
+signed ABC135_D() {
+    cin.tie(0);
+    ios::sync_with_stdio(0);
+    string s, t;
+    cin >> s >> t;
+
+    int n = s.size(), m = t.size();
+
+    string b;
+    while(b.size() < t.size()) b += s;
+    auto mp = knuth_morris_pratt(t + '$' + b + b);
+
+    vector<int> match(n);
+    for(int i = m + 1; i <= m + n; i++) match[i - (m + 1)] = mp[i + m] == m;
+
+    vector<vector<int>> G(n);
+    for(int i = 0; i < n; i++)
+        if(match[i]) G[i].emplace_back((i + m) % n);
+
+    vector<int> indeg(n, 0);
+    for(int i = 0; i < n; i++)
+        for(int j : G[i]) indeg[j]++;
+
+    queue<int> que;
+    for(int i = 0; i < n; i++)
+        if(indeg[i] == 0) que.emplace(i);
+
+    vector<int> dp(n, 0);
+    while(!que.empty()) {
+        int v = que.front();
+        que.pop();
+        for(int u : G[v]) {
+            chmax(dp[u], dp[v] + 1);
+            indeg[u]--;
+            if(indeg[u] == 0) que.emplace(u);
+        }
+    }
+
+    for(int i = 0; i < n; i++) {
+        if(indeg[i] != 0) {
+            cout << -1 << endl;
+            return 0;
+        }
+    }
+
+    cout << *max_element(dp.begin(), dp.end()) << endl;
+    return 0;
+}
+
+

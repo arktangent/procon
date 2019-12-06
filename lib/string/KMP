@@ -15,7 +15,7 @@ struct KMP {
         }
     }
 
-    // the period of S[0:i]
+    // the period of S[0:i)
     int period(int i) { return i - fail[i]; }
     
     // the index i such that S[i:] has the exact prefix p
@@ -31,7 +31,7 @@ struct KMP {
     }
 };
 
-//trans logN
+// trans logN : pattern-matching only
 struct KMP {
     string pat;
     vector<int> fail;
@@ -52,10 +52,11 @@ struct KMP {
         }
     }
 
-    // the period of S[0:i]
+    // the period of S[0:i)
     int period(int i) { return i - fail[i]; }
 
     // the index i such that S[i:] has the exact prefix p
+    // S is the pattern
     vector<int> match(const string &S) {
         int n = (int)S.size(), m = (int)pat.size();
         vector<int> res;

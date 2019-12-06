@@ -1,0 +1,97 @@
+//including LowLink
+struct TwoEdgeCC {
+    int n, pos;
+    vector<int> ord, low, par, blg, num;
+    vector<vector<int>> G, C, T;
+    vector<vector<pair<int, int>>> E;
+
+    vector<int> ap;
+    vector<pair<int, int>> bs, cand;
+
+    TwoEdgeCC(int n)
+        : n(n), pos(0), ord(n, -1), low(n), par(n, -1), blg(n, -1), num(n, 1), G(n) {}
+
+    void add_edge(int u, int v) {
+        G[u].emplace_back(v);
+        G[v].emplace_back(u);
+    }
+
+    bool is_bridge(int u, int v) {
+        if(ord[u] > ord[v]) swap(u, v);
+        return ord[u] < low[v];
+    }
+
+    void dfs(int v) {
+        ord[v] = low[v] = pos++;
+        for(int u : G[v]) {
+            if(u == par[v]) continue;
+            if(ord[u] < ord[v]) cand.emplace_back(min(u, v), max(u, v));
+            if(~ord[u]) {
+                low[v] = min(low[v], ord[u]);
+                continue;
+            }
+            par[u] = v;
+            dfs(u);
+            num[v] += num[u];
+            low[v] = min(low[v], low[u]);
+            if(is_bridge(u, v)) bs.emplace_back(u, v);
+            if(low[u] >= ord[v]) {
+                E.emplace_back();
+                while(1) {
+                    auto e = cand.back();
+                    cand.pop_back();
+                    E.back().emplace_back(e);
+                    if(make_pair(min(u, v), max(u, v)) == e) break;
+                }
+            }
+        }
+    }
+
+    void fill_component(int v) {
+        C[blg[v]].emplace_back(v);
+        for(int u : G[v]) {
+            if(~blg[u] || is_bridge(u, v)) continue;
+            blg[u] = blg[v];
+            fill_component(u);
+        }
+    }
+
+    void add_component(int v, int &k) {
+        if(~blg[v]) return;
+        blg[v] = k++;
+        C.emplace_back();
+        fill_component(v);
+    }
+
+    int build() {
+        for(int i = 0; i < n; i++)
+            if(ord[i] < 0) dfs(i);
+
+        vector<int> cnt(n, 0);
+        for(int i = 0; i < n; i++) {
+            int p = par[i];
+            if(p < 0) continue;
+            if(par[p] < 0)
+                cnt[p]++;
+            else if(ord[p] <= low[i])
+                ap.emplace_back(p);
+        }
+
+        for(int i = 0; i < n; i++)
+            if(cnt[i] > 1) ap.emplace_back(i);
+
+        sort(ap.begin(), ap.end());
+        ap.erase(unique(ap.begin(), ap.end()), ap.end());
+
+        int k = 0;
+        for(int i = 0; i < n; i++) add_component(i, k);
+
+        T.assign(k, vector<int>());
+        for(auto e : bs) {
+            int u = blg[e.first], v = blg[e.second];
+            T[u].emplace_back(v);
+            T[v].emplace_back(u);
+        }
+        return k;
+    }
+};
