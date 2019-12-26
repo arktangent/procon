@@ -1,6 +1,6 @@
+
 #define EPS (1e-10)
 #define equals(a, b) (fabs((a) - (b)) < EPS)
-#define PI 3.141592653589793238
 
 // COUNTER CLOCKWISE
 static const int CCW_COUNTER_CLOCKWISE = 1;
@@ -170,8 +170,7 @@ int ccw(Point p0, Point p1, Point p2) {
 }
 
 bool intersectSS(Point p1, Point p2, Point p3, Point p4) {
-    return (ccw(p1, p2, p3) * ccw(p1, p2, p4) <= 0 &&
-            ccw(p3, p4, p1) * ccw(p3, p4, p2) <= 0);
+    return (ccw(p1, p2, p3) * ccw(p1, p2, p4) <= 0 && ccw(p3, p4, p1) * ccw(p3, p4, p2) <= 0);
 }
 
 bool intersectSS(Segment s1, Segment s2) {
@@ -221,8 +220,7 @@ double getDistanceSP(Segment s, Point p) {
 
 double getDistanceSS(Segment s1, Segment s2) {
     if(intersectSS(s1, s2)) return 0.0;
-    return min(min(getDistanceSP(s1, s2.p1), getDistanceSP(s1, s2.p2)),
-               min(getDistanceSP(s2, s1.p1), getDistanceSP(s2, s1.p2)));
+    return min(min(getDistanceSP(s1, s2.p1), getDistanceSP(s1, s2.p2)), min(getDistanceSP(s2, s1.p1), getDistanceSP(s2, s1.p2)));
 }
 
 Point getCrossPointSS(Segment s1, Segment s2) {
@@ -302,15 +300,13 @@ Polygon andrewScan(Polygon s) {
     l.push_back(s[s.size() - 1]);
     l.push_back(s[s.size() - 2]);
     for(int i = 2; i < (int)s.size(); i++) {
-        for(int n = u.size();
-            n >= 2 && ccw(u[n - 2], u[n - 1], s[i]) != CCW_CLOCKWISE; n--) {
+        for(int n = u.size(); n >= 2 && ccw(u[n - 2], u[n - 1], s[i]) != CCW_CLOCKWISE; n--) {
             u.pop_back();
         }
         u.push_back(s[i]);
     }
     for(int i = s.size() - 3; i >= 0; i--) {
-        for(int n = l.size();
-            n >= 2 && ccw(l[n - 2], l[n - 1], s[i]) != CCW_CLOCKWISE; n--) {
+        for(int n = l.size(); n >= 2 && ccw(l[n - 2], l[n - 1], s[i]) != CCW_CLOCKWISE; n--) {
             l.pop_back();
         }
         l.push_back(s[i]);
@@ -459,10 +455,8 @@ vector<Line> tangent(Circle c1, Circle c2) {
             ls.emplace_back(c1.c + u * c1.r, c1.c + (u + v) * c1.r);
         } else if(1 - h * h > 0) {
             Point uu = u * h, vv = v * sqrt(1 - h * h);
-            ls.emplace_back(c1.c + (uu + vv) * c1.r,
-                            c2.c - (uu + vv) * c2.r * s);
-            ls.emplace_back(c1.c + (uu - vv) * c1.r,
-                            c2.c - (uu - vv) * c2.r * s);
+            ls.emplace_back(c1.c + (uu + vv) * c1.r, c2.c - (uu + vv) * c2.r * s);
+            ls.emplace_back(c1.c + (uu - vv) * c1.r, c2.c - (uu - vv) * c2.r * s);
         }
     }
 
@@ -568,8 +562,7 @@ int manhattanIntersection(vector<Segment> ss, const int INF) {
 
 double area(Polygon ps, Circle c) {
     if(ps.size() < 3u) return 0;
-    function<double(Circle, Point, Point)> dfs = [&](Circle c, Point a,
-                                                     Point b) {
+    function<double(Circle, Point, Point)> dfs = [&](Circle c, Point a, Point b) {
         Vector va = c.c - a, vb = c.c - b;
         double f = cross(va, vb), res = 0;
         if(equals(f, 0.0)) return res;
