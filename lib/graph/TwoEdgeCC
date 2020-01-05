@@ -1,15 +1,20 @@
-//including LowLink
+
+// O(V+E) non-directed SCC
+// including LowLink
 struct TwoEdgeCC {
     int n, pos;
     vector<int> ord, low, par, blg, num;
+    //C:vertex-group T:compressed G
     vector<vector<int>> G, C, T;
+    //E:edge-group
     vector<vector<pair<int, int>>> E;
 
     vector<int> ap;
     vector<pair<int, int>> bs, cand;
 
     TwoEdgeCC(int n)
-        : n(n), pos(0), ord(n, -1), low(n), par(n, -1), blg(n, -1), num(n, 1), G(n) {}
+        : n(n), pos(0), ord(n, -1), low(n), par(n, -1), blg(n, -1), num(n, 1),
+          G(n) {}
 
     void add_edge(int u, int v) {
         G[u].emplace_back(v);

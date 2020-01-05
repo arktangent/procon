@@ -1,0 +1,60 @@
+
+struct SectionStructure {
+    set<pair<ll, ll>> buf;
+    SectionStructure() {
+        buf.insert({-LINF, -LINF});
+        buf.insert({LINF, LINF});
+    }
+    void add(ll l, ll r) {
+        auto ite = buf.lower_bound({l, -LINF});
+
+        if(ite->first == LINF) { // 大きいやつが無い
+            ite--;
+            if(ite->second <= l) { // 被ってないなら追加
+                buf.insert({l, r});
+            } else { // 被ってるならそれとくっつける
+                ll L = ite->first;
+                ll R = ite->second;
+
+                buf.erase(ite);
+                buf.insert({L, max(r, R)});
+            }
+        } else { // 被ってるのがある
+            auto pre = buf.upper_bound({r, -LINF});
+            auto pp = pre;
+            pp--;
+
+            ll L = min(l, ite->first);
+            ll R = max(r, pp->second);
+
+            ite--;
+            if(ite->second <= l) { // 被ってないなら追加
+                ite++;
+            } else { // 被ってるならそれとくっつける
+                L = ite->first;
+            }
+
+            buf.erase(ite, pre);
+            buf.insert({L, R});
+        }
+    }
+    set<pair<ll, ll>>::iterator get(ll x) {
+        auto ite = buf.lower_bound({x, -LINF});
+
+        if(ite->first == LINF) return buf.end();
+        if(ite->second < x) return buf.end();
+        return ite;
+    }
+    set<pair<ll, ll>>::iterator end() { return buf.end(); }
+    int check(ll a, ll b) {
+        if(a > b) swap(a, b);
+        auto aa = buf.upper_bound({a, LINF});
+        aa--;
+        if(aa->first == -LINF) return false;
+        return b <= aa->second;
+    }
+    void print() {
+        printf("<>\n");
+        for(auto p : buf) printf("[%lld,%lld]\n", p.first, p.second);
+    }
+};

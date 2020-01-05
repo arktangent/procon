@@ -1,3 +1,4 @@
+//HL-decomposition tree-query->O(logN)
 class HLD {
   private:
     void dfs_sz(int v) {

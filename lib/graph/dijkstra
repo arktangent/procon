@@ -4,7 +4,7 @@ struct edge {
     bool operator<(const edge &another) const { return cost < another.cost; };
     bool operator>(const edge &another) const { return cost > another.cost; };
 };
-vector<vector<edge>> g;
+vector<vector<edge>> G;
 VL d;
 
 void dijkstra(ll s) {
@@ -19,8 +19,8 @@ void dijkstra(ll s) {
         ll v = now.to;
         if(d[v] < now.cost) continue;
 
-        REP(i, g[v].size()) {
-            edge e = g[v][i];
+        REP(i, G[v].size()) {
+            edge e = G[v][i];
             if(d[e.to] > d[v] + e.cost) {
                 d[e.to] = d[v] + e.cost;
                 pq.push({e.to, d[e.to]});

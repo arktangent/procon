@@ -79,7 +79,7 @@ void bfs01(ll x) {
 
 
 ll N, M;
-vector<VL> g;
+vector<VL> G;
 VL d;
 
 void bfs(ll s) {
@@ -90,8 +90,8 @@ void bfs(ll s) {
     while(!q.empty()) {
         ll now = q.front();
         q.pop();
-        REP(i, g[now].size()) {
-            ll to = g[now][i];
+        REP(i, G[now].size()) {
+            ll to = G[now][i];
             if(d[to] == LINF) {
                 d[to] = d[now] + 1;
                 q.emplace(to);
@@ -101,7 +101,7 @@ void bfs(ll s) {
 }
 
 ll N, M;
-vector<VL> g;
+vector<VL> G;
 VL d;
 
 \\ver_経路カウント
@@ -114,8 +114,8 @@ void bfs(ll s) {
     while(!q.empty()) {
         ll now = q.front();
         q.pop();
-        REP(i, g[now].size()) {
-            ll to = g[now][i];
+        REP(i, G[now].size()) {
+            ll to = G[now][i];
             if(d[to] == LINF) {
                 d[to] = d[now] + 1;
                 (cnt[to] += cnt[now]) %= MOD;

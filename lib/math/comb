@@ -37,8 +37,10 @@ int next_combination(int sub) {
     int x = sub & -sub, y = sub + x;
     return (((sub & ~y) / x) >> 1) | y;
 }
+for(ll bit=(1LL<k)-1; bit<(1LL<<N); bit=next_combination(bit));
 
-//部分集合
+
+//部分集坈
 ll subpart(ll sup,sub){
     return (sub-1)&sup;
 }

@@ -12,22 +12,24 @@ int dfs(int cur, int a, int b, int c) {
     return min({a1, a2, a3, a4});
 }
 
-//find roop
-VVL G(1000);
+// find roop
+const ll NMAX = 100001;
+VVL G(NMAX);
 VL hist;
-bool used[1000], finished[1000];
+bool used[NMAX], finished[NMAX];
 ll start = -1;
 
-void findroop(int v) {
+void findroop(int v, int par) {
     used[v] = true;
     hist.emplace_back(v);
     FOREACH(to, G[v]) {
+        if(to == par) continue;
         if(finished[to]) continue;
         if(used[to]) {
             start = to;
             return;
         }
-        findroop(to);
+        findroop(to, v);
         if(start != -1) return;
     }
     hist.pop_back();
@@ -35,11 +37,12 @@ void findroop(int v) {
 }
 
 //二部グラフ判定
-ll color[NMAX]
+ll color[NMAX];
+VVL G;
 
 bool bpdfs(ll v, ll c) {
     color[v] = c;
-    FOREACH(next, g[v]) {
+    FOREACH(next, G[v]) {
         if(color[next] == c)
             return false;
         else if(color[next] == 0 && !bpdfs(next, -c))

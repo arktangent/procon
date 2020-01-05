@@ -1,13 +1,16 @@
+//O(V+E) directed TwoEdgeCC
 struct SCC {
     ll V, cnt;
     vector<vector<ll>> G, rG, graph;
     vector<ll> vs, cmp, sz;
     vector<bool> used, in;
     SCC(ll node_size) : V(node_size), G(V), rG(V), cmp(V), used(V, false) {}
+
     void add_edge(ll from, ll to) {
         G[from].push_back(to);
         rG[to].push_back(from);
     }
+    
     void dfs(ll u) {
         used[u] = true;
         for(ll v : G[u]) {
