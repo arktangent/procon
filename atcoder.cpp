@@ -171,7 +171,6 @@ signed main() {
     REP(i, N) {
         ll idx = od[i];
         ll now = idx + lsum.sum(N - 1) - lsum.sum(idx) - rsum.sum(idx);
-        cout << idx << " " << now << "\n";
         if(now - l < N - 1 - r - now) {
             ans += now - l;
             lsum.add(idx, 1);
