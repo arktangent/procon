@@ -18,9 +18,26 @@ ll comb(ll n, ll k){
     return fac[n]*(finv[k]*finv[n-k]%MOD)%MOD;
 }
 
+ 
+// O(b)
+mint comb(ll a, ll b) {
+    mint n = 1, m = 1;
+    for(ll i = 1; i <= b; i++) {
+        n *= a - i + 1;
+        m *= i;
+    }
+    return modpow((mint)m, MOD - 2) * n;
+}
+
+
 ll hcomb(ll n, ll k){
     return comb(n+k-1,k);
 }
+
+// Montmort number
+vector<mint> dm(K + 1);
+dm[0] = 1, dm[1] = 0;
+FOR(i, 2, K + 1) dm[i] = (dm[i - 2] + dm[i - 1]) * (i - 1);
 
 // divide number
 dp[0][0] = 1;

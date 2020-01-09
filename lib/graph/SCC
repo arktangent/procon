@@ -1,7 +1,7 @@
-//O(V+E) directed TwoEdgeCC
+// O(V+E) directed TwoEdgeCC
 struct SCC {
     ll V, cnt;
-    vector<vector<ll>> G, rG, graph;
+    vector<vector<ll>> G, rG, graph, cvs;
     vector<ll> vs, cmp, sz;
     vector<bool> used, in;
     SCC(ll node_size) : V(node_size), G(V), rG(V), cmp(V), used(V, false) {}
@@ -10,7 +10,7 @@ struct SCC {
         G[from].push_back(to);
         rG[to].push_back(from);
     }
-    
+
     void dfs(ll u) {
         used[u] = true;
         for(ll v : G[u]) {
@@ -29,7 +29,7 @@ struct SCC {
             }
         }
     }
-    ll solve() { //ã≠òAåãê¨ï™ÇÃêîÇï‘Ç∑
+    ll solve() {
         for(ll i = 0; i < V; i++) {
             if(!used[i]) {
                 dfs(i);
@@ -58,5 +58,12 @@ struct SCC {
             }
         }
         return graph;
+    }
+
+    vector<vector<ll>> build() {
+        solve();
+        cvs.resize(cnt);
+        for(int i = 0; i < V; i++) cvs[cmp[i]].emplace_back(i);
+        return make_graph();
     }
 };

@@ -1,3 +1,4 @@
+
 // size用
 struct UnionFind {
     vector<ll> par;
@@ -28,6 +29,7 @@ struct UnionFind {
     ll size(ll x) { return sizes[find(x)]; }
 };
 
+ll N, M;
 struct edge {
     ll from, to, cost;
     bool operator<(const edge &another) const { return cost < another.cost; };
@@ -35,18 +37,14 @@ struct edge {
 };
 vector<edge> es;
 
-
 ll kruskal() {
     ll res = 0;
     auto uf = UnionFind(N);
     sort(All(es));
-    REP(i, SZ(es)) {
+    REP(i, es.size()) {
         edge e = es[i];
         if(!uf.same(e.from, e.to)) {
             uf.unite(e.from, e.to);
-            G[e.from].emplace_back(e.to, e.cost);
-            G[e.to].emplace_back(e.from, e.cost);
-            used[i] = true;
             res += e.cost;
         }
     }

@@ -20,6 +20,20 @@ void tsort(){
 	reverse(v.begin(), v.end());
 }
 
+
+//ラムダ　トポロジカルソート
+VL used(n, false);
+VL od;
+auto dfs = fix([&](auto f, auto u) -> void {
+    if(used[u]) return;
+    used[u] = true;
+    FOREACH(to, g[u]) f(f, to);
+    od.push_back(u);
+});
+REP(i, n) dfs(i);
+reverse(All(od));
+
+
 //トポロジカルソートque
 struct TopologicalSort {
     vector<set<int>> G;
