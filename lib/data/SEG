@@ -87,9 +87,9 @@ template <typename T, typename E> struct SegmentTree {
     }
 };
 ll e1 = 0;
-auto f = [](ll a, ll b) { return a + b; };
-auto g = [](ll a, ll b) { return b; };
-SegmentTree<ll,ll>(N + 1, f, g, e1, VL(N + 1))
+auto f = [](ll a, ll b) { return min(a, b); };
+auto g = [](ll a, ll b) { return a + b; };
+SegmentTree<ll, ll> seg(N, f, g, e1, VL(N));
 
 //遅延seg
 template <typename T, typename E> struct SegmentTree {

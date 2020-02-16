@@ -22,15 +22,15 @@ void tsort(){
 
 
 //ラムダ　トポロジカルソート
-VL used(n, false);
+VL used(N, false);
 VL od;
 auto dfs = fix([&](auto f, auto u) -> void {
     if(used[u]) return;
     used[u] = true;
-    FOREACH(to, g[u]) f(f, to);
+    FOREACH(to, G[u]) f(f, to);
     od.push_back(u);
 });
-REP(i, n) dfs(i);
+REP(i, N) dfs(i);
 reverse(All(od));
 
 

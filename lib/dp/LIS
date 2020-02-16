@@ -53,7 +53,7 @@ struct LIS {
 
 
 ll LIS(VL a) {
-    VL dp(N, LINF);
-    REP(i, N) { *lower_bound(All(dp), a[i]) = a[i]; }
+    VL dp(a.size(), LINF);
+    REP(i, a.size()) { *lower_bound(All(dp), a[i]) = a[i]; }
     return lower_bound(All(dp), LINF) - dp.begin();
 }

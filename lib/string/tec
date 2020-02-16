@@ -34,9 +34,9 @@ vector<string> split(string str, char del) {
 }
 
 // for program
-std::vector<std::string> split(std::string str, char del) {
-    std::vector<std::string> result;
-    std::string subStr;
+vector<string> split(string str, char del) {
+    vector<string> result;
+    string subStr;
 
     for(const char c : str) {
         if(c == del) {

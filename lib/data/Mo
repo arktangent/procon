@@ -50,6 +50,13 @@ struct Mo
 };
 
 
+void Mo::add(int idx)
+{
+}
+
+void Mo::del(int idx)
+{
+}
 
 \\edge query
 struct Mo_Tree_Vertex {
