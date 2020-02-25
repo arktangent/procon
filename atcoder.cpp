@@ -19,6 +19,7 @@ using namespace std;
 #define All(a) (a).begin(), (a).end()
 #define rAll(a) (a).rbegin(), (a).rend()
 #define cinfast() cin.tie(0), ios::sync_with_stdio(false)
+#define precise(x) cout << fixed << setprecision(x)
 #define PERM(c)                                                                \
     sort(All(c));                                                              \
     for(bool cp = true; cp; cp = next_permutation(All(c)))
@@ -67,7 +68,8 @@ inline void COUT(Head &&head, Tail &&... tail) {
     CIN(__VA_ARGS__)
 #define Printv(v)                                                              \
     {                                                                          \
-        FOREACH(x, v) { cout << x << " "; }                                    \
+        REP(hoge, v.size())                                                    \
+        cout << v[hoge] << (hoge == v.size() - 1 ? "" : " ");                  \
         cout << "\n";                                                          \
     }
 template <typename T = string> inline void eputs(T s) {
@@ -82,6 +84,20 @@ void Fill(A (&array)[N], const T &val) {
 long long next_combination(long long sub) {
     long long x = sub & -sub, y = sub + x;
     return (((sub & ~y) / x) >> 1) | y;
+}
+template <class T> inline bool chmax(T &a, T b) {
+    if(a < b) {
+        a = b;
+        return 1;
+    }
+    return 0;
+}
+template <class T> inline bool chmin(T &a, T b) {
+    if(a > b) {
+        a = b;
+        return 1;
+    }
+    return 0;
 }
 
 // generic lambdas
@@ -111,111 +127,38 @@ typedef vector<double> VD;
 typedef vector<string> VS;
 
 const int INF = 1e9;
-// const int MOD = 1e9 + 7;
-const int MOD = 998244353;
+const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
 const ll LINF = 1e18;
 const ll dw[] = {1, 1, 0, -1, -1, -1, 0, 1};
 const ll dh[] = {0, 1, 1, 1, 0, -1, -1, -1};
-#define PI 3.141592653589793238
+#define PI 3.141592653589793230
 #define EPS 1e-7
 
-// 1000000007 で割ったあまりを扱う構造体
-template <int MOD> struct Fp {
-    long long val;
-    constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
-        if(val < 0) v += MOD;
-    }
-    constexpr int getmod() { return MOD; }
-    constexpr Fp operator-() const noexcept { return val ? MOD - val : 0; }
-    constexpr Fp operator+(const Fp &r) const noexcept {
-        return Fp(*this) += r;
-    }
-    constexpr Fp operator-(const Fp &r) const noexcept {
-        return Fp(*this) -= r;
-    }
-    constexpr Fp operator*(const Fp &r) const noexcept {
-        return Fp(*this) *= r;
-    }
-    constexpr Fp operator/(const Fp &r) const noexcept {
-        return Fp(*this) /= r;
-    }
-    constexpr Fp &operator+=(const Fp &r) noexcept {
-        val += r.val;
-        if(val >= MOD) val -= MOD;
-        return *this;
-    }
-    constexpr Fp &operator-=(const Fp &r) noexcept {
-        val -= r.val;
-        if(val < 0) val += MOD;
-        return *this;
-    }
-    constexpr Fp &operator*=(const Fp &r) noexcept {
-        val = val * r.val % MOD;
-        return *this;
-    }
-    constexpr Fp &operator/=(const Fp &r) noexcept {
-        long long a = r.val, b = MOD, u = 1, v = 0;
-        while(b) {
-            long long t = a / b;
-            a -= t * b;
-            swap(a, b);
-            u -= t * v;
-            swap(u, v);
-        }
-        val = val * u % MOD;
-        if(val < 0) val += MOD;
-        return *this;
-    }
-    constexpr bool operator==(const Fp &r) const noexcept {
-        return this->val == r.val;
-    }
-    constexpr bool operator!=(const Fp &r) const noexcept {
-        return this->val != r.val;
-    }
-    friend constexpr ostream &operator<<(ostream &os, const Fp<MOD> &x) noexcept {
-        return os << x.val;
-    }
-    friend constexpr istream &operator>>(istream &is, Fp<MOD> &x) noexcept {
-        return is >> x.val;
-    }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD> &a, long long n) noexcept {
-        if(n == 0) return 1;
-        auto t = modpow(a, n / 2);
-        t = t * t;
-        if(n & 1) t = t * a;
-        return t;
-    }
-};
-
-using mint = Fp<MOD>;
-
-const ll NMAX = 5e6;
-ll fac[NMAX + 1], inv[NMAX + 1], finv[NMAX + 1];
-
-void cominit() {
-    fac[0] = fac[1] = 1;
-    finv[0] = finv[1] = 1;
-    inv[1] = 1;
-    FOR(i, 2, NMAX + 1) {
-        fac[i] = fac[i - 1] * i % MOD;
-        inv[i] = MOD - inv[MOD % i] * (MOD / i) % MOD;
-        finv[i] = finv[i - 1] * inv[i] % MOD;
-    }
-}
-
-ll comb(ll n, ll k) {
-    if(n < k) return 0;
-    if(n < 0 || k < 0) return 0;
-    return fac[n] * (finv[k] * finv[n - k] % MOD) % MOD;
-}
-
-ll hcomb(ll n, ll k) { return comb(k + n - 1, k); }
-
 signed main() {
-    LCIN(N, M);
-    cominit();
-    mint ans = hcomb(N, 3 * M);
-    ans -= (mint)N * hcomb(N, M - 1);
-    REP(i, M) { ans -= (mint)hcomb(N, i) * comb(N, 3 * M - 2 * i); }
-    cout << ans << "\n";
+    LCIN(K, Q);
+    VL d(K);
+    VECCIN(d);
+    REP(i, Q) {
+        LCIN(N, X, M);
+        X %= M;
+        VL dd(K);
+        ll cnt = 0;
+        REP(i, K) {
+            dd[i] = d[i] % M;
+            if(dd[i] == 0) cnt++;
+        }
+        ll sum = 0;
+        REP(i, K) sum += dd[i];
+        ll nsum = (N - 1) / K * sum + X;
+        ll ans = N - 1;
+        ans -= (N - 1) / K * cnt;
+        ans -= nsum / M;
+        ll now = nsum % M;
+        REP(i, (N - 1) % K) {
+            if(now >= (now + dd[i]) % M) ans--;
+            now = (now + dd[i]) % M;
+        }
+        cout << ans << "\n";
+    }
 }
