@@ -92,12 +92,13 @@ template <typename T> struct BIT {
 
 
 
-
 // 0-indexed
 template <class T> struct BinaryIndexedTree {
     vector<T> data;
 
     BinaryIndexedTree(int sz) { data.assign(++sz, 0); }
+
+    void init(int sz) { data.assign(++sz, 0); }
 
     T sum(int k) {
         T ret = 0;

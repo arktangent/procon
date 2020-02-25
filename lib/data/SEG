@@ -159,7 +159,7 @@ template <typename T, typename E> struct SegmentTree {
     }
     T query(int a, int b) { return query(a, b, 0, 0, n); }
 };
-ll e1 = 0,e2=0;
+ll e1 = 0,e2=LINF;
 auto f = [](ll a, ll b) { return a + b; };
 auto g = [](ll a, ll b) { return b; };
 auto h = [](ll a, ll b) { return b; };
@@ -239,7 +239,7 @@ template <typename T, typename E> struct SegmentTree {
     }
 };
 
-ll e1 = 0,e2=0;
+ll e1 = 0,e2=LINF;
 auto f = [](ll a, ll b) { return a + b; };
 auto g = [](ll a, ll b) { return b; };
 auto h = [](ll a, ll b) { return b; };
