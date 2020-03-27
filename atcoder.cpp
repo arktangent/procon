@@ -18,8 +18,14 @@ using namespace std;
 #define se second
 #define All(a) (a).begin(), (a).end()
 #define rAll(a) (a).rbegin(), (a).rend()
+#define sz(s) (ll) s.size()
 #define cinfast() cin.tie(0), ios::sync_with_stdio(false)
-#define precise(x) cout << fixed << setprecision(x)
+#define debug(x) cerr << #x << " = " << (x) << endl;
+#define loop(x)                                                                \
+    LCIN(loop);                                                                \
+    while(loop--) {                                                            \
+        x;                                                                     \
+    }
 #define PERM(c)                                                                \
     sort(All(c));                                                              \
     for(bool cp = true; cp; cp = next_permutation(All(c)))
@@ -85,14 +91,14 @@ long long next_combination(long long sub) {
     long long x = sub & -sub, y = sub + x;
     return (((sub & ~y) / x) >> 1) | y;
 }
-template <class T> inline bool chmax(T &a, T b) {
+template <class T> inline bool chmax(T &a, const T &b) {
     if(a < b) {
         a = b;
         return 1;
     }
     return 0;
 }
-template <class T> inline bool chmin(T &a, T b) {
+template <class T> inline bool chmin(T &a, const T &b) {
     if(a > b) {
         a = b;
         return 1;
@@ -101,15 +107,16 @@ template <class T> inline bool chmin(T &a, T b) {
 }
 
 // generic lambdas
-template <typename F>
+template <typename first>
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
 [[nodiscard]]
-#elif defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+#elif defined(__GNUC__) &&                                                     \
+    (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4)
 __attribute__((warn_unused_result))
 #endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
-    static inline constexpr decltype(auto)
-    fix(F &&f) noexcept {
-    return [f = std::forward<F>(f)](auto &&... args) {
+static inline constexpr decltype(auto)
+fix(first &&f) noexcept {
+    return [f = std::forward<first>(f)](auto &&... args) {
         return f(f, std::forward<decltype(args)>(args)...);
     };
 }
@@ -135,30 +142,40 @@ const ll dh[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793230
 #define EPS 1e-7
 
-signed main() {
-    LCIN(K, Q);
-    VL d(K);
-    VECCIN(d);
-    REP(i, Q) {
-        LCIN(N, X, M);
-        X %= M;
-        VL dd(K);
-        ll cnt = 0;
-        REP(i, K) {
-            dd[i] = d[i] % M;
-            if(dd[i] == 0) cnt++;
-        }
-        ll sum = 0;
-        REP(i, K) sum += dd[i];
-        ll nsum = (N - 1) / K * sum + X;
-        ll ans = N - 1;
-        ans -= (N - 1) / K * cnt;
-        ans -= nsum / M;
-        ll now = nsum % M;
-        REP(i, (N - 1) % K) {
-            if(now >= (now + dd[i]) % M) ans--;
-            now = (now + dd[i]) % M;
-        }
-        cout << ans << "\n";
+int dp[1 << 20];
+
+void solve() {
+    LCIN(N);
+    VL a(N);
+    VECCIN(a);
+    REP(i, N) a[i]--;
+    vector<vector<int>> sum(N, vector<int>(20));
+    REP(i, N) {
+        REP(j, 20) { sum[i][j] = (i ? sum[i - 1][j] : 0); }
+        sum[i][a[i]]++;
     }
+    VVL idxs(20);
+    REP(i, N) { idxs[a[i]].emplace_back(i); }
+    vector<vector<int>> csum(20, vector<int>(20));
+    REP(i, 20) FOREACH(idx, idxs[i]) REP(k, 20) { csum[i][k] += sum[idx][k]; }
+    Fill(dp, LINF);
+    dp[0] = 0;
+    REP(i, 1 << 20) REP(j, 20) {
+        if(i >> j & 1) continue;
+        int tmp = 0;
+        REP(k, 20) {
+            ;
+            if(k == j || i >> k & 1) continue;
+            tmp += csum[j][k];
+        }
+        chmin(dp[i | 1 << j], dp[i] + tmp);
+    }
+    COUT(dp[(1 << 20) - 1]);
+}
+
+signed main() {
+    cinfast();
+    // cout << fixed << setprecision(12);
+    // loop(solve());
+    solve();
 }

@@ -1,3 +1,4 @@
+
 // 1000000007 で割ったあまりを扱う構造体
 class mint {
   public:
@@ -49,19 +50,18 @@ class mint {
     }
     friend mint modpow(const mint &a, long long n) noexcept {
         if(n == 0) return 1;
-        auto t = modpow(a, n / 2);
+        mint t = modpow(a, n / 2);
         t = t * t;
         if(n & 1) t = t * a;
         return t;
     }
 };
 ll mint::MOD = 1e9 + 7;
-
-const ll MAX_SIZE = 5e6;
+ll const MAX_SIZE = 1e6 + 1;
 mint inv[MAX_SIZE];
 mint fact[MAX_SIZE];
 mint factinv[MAX_SIZE];
-void init() {
+void cominit() {
     inv[1] = 1;
     for(int i = 2; i < MAX_SIZE; i++) {
         inv[i] = (-inv[mint::MOD % i]) * (mint::MOD / i);
@@ -78,3 +78,8 @@ mint comb(int n, int k) {
     }
     return 0;
 }
+mint hcomb(ll n, ll k) {
+    if(n == 0 && k == 0) return 1;
+    return comb(n + k - 1, k);
+}
+ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
