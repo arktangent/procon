@@ -110,8 +110,7 @@ template <class T> inline bool chmin(T &a, const T &b) {
 template <typename first>
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
 [[nodiscard]]
-#elif defined(__GNUC__) &&                                                     \
-    (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+#elif defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4)
 __attribute__((warn_unused_result))
 #endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
 static inline constexpr decltype(auto)
@@ -134,47 +133,18 @@ typedef vector<double> VD;
 typedef vector<string> VS;
 
 const int INF = 1e9;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
-const ll LINF = 1e18;
 const ll dw[] = {1, 1, 0, -1, -1, -1, 0, 1};
 const ll dh[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793230
 #define EPS 1e-7
 
-int dp[1 << 20];
-
-void solve() {
-    LCIN(N);
-    VL a(N);
-    VECCIN(a);
-    REP(i, N) a[i]--;
-    vector<vector<int>> sum(N, vector<int>(20));
-    REP(i, N) {
-        REP(j, 20) { sum[i][j] = (i ? sum[i - 1][j] : 0); }
-        sum[i][a[i]]++;
-    }
-    VVL idxs(20);
-    REP(i, N) { idxs[a[i]].emplace_back(i); }
-    vector<vector<int>> csum(20, vector<int>(20));
-    REP(i, 20) FOREACH(idx, idxs[i]) REP(k, 20) { csum[i][k] += sum[idx][k]; }
-    Fill(dp, LINF);
-    dp[0] = 0;
-    REP(i, 1 << 20) REP(j, 20) {
-        if(i >> j & 1) continue;
-        int tmp = 0;
-        REP(k, 20) {
-            ;
-            if(k == j || i >> k & 1) continue;
-            tmp += csum[j][k];
-        }
-        chmin(dp[i | 1 << j], dp[i] + tmp);
-    }
-    COUT(dp[(1 << 20) - 1]);
-}
+void solve() {}
 
 signed main() {
-    cinfast();
+    // cinfast();
     // cout << fixed << setprecision(12);
     // loop(solve());
     solve();

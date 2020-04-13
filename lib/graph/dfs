@@ -36,6 +36,23 @@ void findroop(int v, int par) {
     finished[v] = true;
 }
 
+VL used(N), hist;
+ll start = -1;
+auto dfs = fix([&](auto f, ll now) -> void {
+    used[now] = 2;
+    hist.emplace_back(now);
+    FOREACH(to, G[now]) {
+        if(used[to] == 2) {
+            start = to;
+        } else if(used[to] == 0) {
+            f(f, to);
+        }
+        if(~start) return;
+    }
+    hist.pop_back();
+    used[now] = 1;
+});
+
 //二部グラフ判定
 ll color[NMAX];
 VVL G;
