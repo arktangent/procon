@@ -60,6 +60,9 @@ inline void COUT(Head &&head, Tail &&... tail) {
     COUT(forward<Tail>(tail)...);
 }
 
+#define CINT(...)                                                              \
+    int __VA_ARGS__;                                                           \
+    CIN(__VA_ARGS__)
 #define CCIN(...)                                                              \
     char __VA_ARGS__;                                                          \
     CIN(__VA_ARGS__)
@@ -110,7 +113,8 @@ template <class T> inline bool chmin(T &a, const T &b) {
 template <typename first>
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
 [[nodiscard]]
-#elif defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+#elif defined(__GNUC__) &&                                                     \
+    (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4)
 __attribute__((warn_unused_result))
 #endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
 static inline constexpr decltype(auto)
@@ -124,13 +128,18 @@ template <typename T> using PQG = priority_queue<T, vector<T>, greater<T>>;
 template <typename T> using PQ = priority_queue<T>;
 
 typedef long long ll;
+typedef vector<int> VI;
+typedef vector<VI> VVI;
 typedef vector<ll> VL;
 typedef vector<VL> VVL;
+typedef pair<int, int> PII;
 typedef pair<ll, ll> PL;
 typedef vector<PL> VPL;
 typedef vector<bool> VB;
 typedef vector<double> VD;
 typedef vector<string> VS;
+template <typename T> using V = vector<T>;
+template <typename T> using VV = vector<vector<T>>;
 
 const int INF = 1e9;
 const ll LINF = 1e18;
@@ -141,11 +150,19 @@ const ll dh[] = {0, 1, 1, 1, 0, -1, -1, -1};
 #define PI 3.141592653589793230
 #define EPS 1e-7
 
-void solve() {}
+void solve() {
+    LCIN(N, K);
+    if(K % 3) {
+        COUT(N % 3 ? "Alice" : "Bob");
+    } else {
+        ll n = N % (K + 1);
+        COUT((n == K || n % 3) ? "Alice" : "Bob");
+    }
+}
 
 signed main() {
-    // cinfast();
+    cinfast();
     // cout << fixed << setprecision(12);
-    // loop(solve());
-    solve();
+    loop(solve());
+    // solve();
 }
