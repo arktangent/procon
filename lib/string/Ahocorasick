@@ -127,4 +127,4 @@ template <size_t X> struct AhoCorasick : Trie<X + 1> {
 };
 
 auto f = [](char c) { return c - 'A'; };
-Trie<26> AhoCorasick(f);
+AhoCorasick<26> aho(f);

@@ -29,7 +29,32 @@ void dijkstra(ll s) {
     }
 }
 
+ll H, W;
+VVL A;
+VVL d;
 
+
+//ver grid
+void dijkstra(ll sh, ll sw) {
+    using tp = tuple<ll, ll, ll>;
+    PQG<tp> pq;
+    d.assign(H, VL(W, LINF));
+    d[sh][sw] = 0;
+    pq.emplace(0LL, sh, sw);
+    ll h, w, cost;
+    while(!pq.empty()) {
+        tie(cost, h, w) = pq.top();
+        pq.pop();
+        if(d[h][w] < cost) continue;
+        REP(i, 4) {
+            ll nh = h + dh[2 * i], nw = w + dw[2 * i];
+            if(nh < 0 || nh > H - 1 || nw < 0 || nw > W - 1) continue;
+            if(chmin(d[nh][nw], cost + A[nh][nw])) {
+                pq.emplace(d[nh][nw], nh, nw);
+            }
+        }
+    }
+}
 
 ll N, M;
 struct edge {
